@@ -16,7 +16,11 @@ passport.use(
       proxy: true,
     },
     async (request, accessToken, refreshToken, profile, done) => {
-      const query = { provider: { name: "GOOGLE", accountId: profile.id } };
+      const query = {
+        "provider.name": "GOOGLE",
+        "provider.accountId": profile.id,
+      };
+
       const existingUser = await User.findOne(query);
 
       // null ~ no error
@@ -26,7 +30,7 @@ passport.use(
         name: profile._json.name,
         email: profile._json.email,
         picture: profile._json.picture,
-        provider: query.provider,
+        provider: { name: "GOOGLE", accountId: profile.id },
       });
 
       done(null, await newUser.save());
