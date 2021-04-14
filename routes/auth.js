@@ -1,22 +1,26 @@
 const router = require("express").Router();
 const passport = require("passport");
 const requiresAuthentication = require("../middlewares/requiresAuthentication");
+const jwt = require("jsonwebtoken");
 
 router.get("/current-user", requiresAuthentication, (req, res) => {
   res.json(req.user);
 });
 
 router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(process.env.CLIENT_URL);
+  res.clearCookie("token").redirect(process.env.CLIENT_URL);
 });
 
 router.get(
   ["/google", "/google/callback"],
   passport.authenticate("google", {
+    session: false,
     scope: ["email", "profile"],
   }),
-  (req, res) => res.redirect(`${process.env.CLIENT_URL}`)
+  (req, res) => {
+    const token = jwt.sign(req.user.id, process.env.JWT_SECRET);
+    res.redirect(`${process.env.CLIENT_URL}/auth-complete?token=${token}`);
+  }
 );
 
 module.exports = router;

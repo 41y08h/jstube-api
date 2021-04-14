@@ -4,7 +4,6 @@ const morgan = require("morgan");
 const routes = require("./routes");
 const mongoose = require("mongoose");
 const debug = require("debug")("app");
-const cookieSession = require("cookie-session");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 
@@ -24,14 +23,7 @@ const app = express();
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cookieSession({
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    keys: [process.env.COOKIE_KEY],
-  })
-);
 app.use(passport.initialize());
-app.use(passport.session());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
