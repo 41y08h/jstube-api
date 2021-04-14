@@ -19,6 +19,7 @@ router.get(
   }),
   (req, res) => {
     const token = jwt.sign(req.user.id, process.env.JWT_SECRET);
+    res.cookie("token", token, { httpOnly: true });
     res.redirect(`${process.env.CLIENT_URL}/auth-complete?token=${token}`);
   }
 );
