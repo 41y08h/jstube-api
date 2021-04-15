@@ -20,7 +20,13 @@ mongoose
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    maxAge: 60 * 1000 * 60 * 24 * 7,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
