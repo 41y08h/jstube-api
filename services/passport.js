@@ -10,7 +10,7 @@ passport.use(
       callbackURL: "/auth/google/callback",
       proxy: true,
     },
-    async (request, accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       const query = {
         "provider.name": "GOOGLE",
         "provider.accountId": profile.id,
