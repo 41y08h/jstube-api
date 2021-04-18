@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
   {
-    name: {
+    description: {
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
+    _user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-    picture: {
+    thumb: {
       type: String,
       required: true,
     },
@@ -19,7 +19,7 @@ const schema = new mongoose.Schema(
       accountId: { type: String, required: true },
     }),
   },
-  { timeStamps: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("user", schema);
