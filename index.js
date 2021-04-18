@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const debug = require("debug")("app");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
+const path = require("path");
 
 require("./services/passport");
 
@@ -30,6 +32,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
+app.use(fileUpload());
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

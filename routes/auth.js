@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const passport = require("passport");
-const requiresAuthentication = require("../middlewares/requiresAuthentication");
+const authRoute = require("../middlewares/authRoute");
 const jwt = require("jsonwebtoken");
 
-router.get("/current-user", requiresAuthentication, (req, res) => {
+router.get("/current-user", authRoute, (req, res) => {
   res.json(req.user);
 });
 
