@@ -4,8 +4,8 @@
   "version": "0.5.0",
   "main": "src/index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index",
-    "dev": "nodemon -r dotenv/config index"
+    "start": "cross-env NODE_ENV=production node src",
+    "dev": "nodemon -r dotenv/config src"
   },
   "author": "Piyush",
   "license": "MIT",
