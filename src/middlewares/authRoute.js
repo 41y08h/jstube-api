@@ -8,7 +8,8 @@ async function authRoute(req, res, next) {
 
     next();
   } catch {
-    return res.status(401).json({
+    res.status(401).json({
+      code: res.statusCode,
       message: "You must be logged in to perform this operation",
     });
   }

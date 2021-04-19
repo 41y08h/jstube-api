@@ -1,5 +1,10 @@
 const Video = require("../../models/Video");
-const uploadVideoFile = require("../../lib/uploadVideoFile");
+const fs = require("fs");
+const path = require("path");
+const { v4: uuid } = require("uuid");
+const getVideoMetaData = require("../../lib/getVideoMetaData");
+const generateThumbnail = require("../../lib/generateThumbnail");
+const uploadToCloud = require("../../lib/uploadToCloud");
 
 async function uploadVideo(req, res) {
   if (req.files === null) {
@@ -20,12 +25,49 @@ async function uploadVideo(req, res) {
     throw new Error("File size must not exceed 50MB.");
   }
 
-  const videoUrl = await uploadVideoFile(file.data);
-  const video = new Video({ ...req.body, source: videoUrl });
-  await video.save();
-  // @TODO - Save video in database
+  const filename = uuid();
+  const tempDir = path.join(__dirname, "../../../temp");
+  const videoPath = path.join(tempDir, `${filename}.mp4`);
 
-  res.status(200).json(video);
+  // Generate Video
+  await file.mv(videoPath);
+
+  // Gather needed metadata
+  const { duration } = await getVideoMetaData(videoPath);
+
+  // Generate thumbnail
+  const thumbnailPath = await generateThumbnail({
+    savePath: tempDir,
+    videoPath,
+    filename,
+  });
+
+  // File have to be encoded in base64
+  const videoFile = file.data.toString("base64");
+  const thumbnailFile = fs.readFileSync(thumbnailPath, { encoding: "base64" });
+
+  // Upload files
+  const videoURL = await uploadToCloud(videoFile, `${filename}.mp4`);
+  const thumbnailURL = await uploadToCloud(thumbnailFile, `${filename}.png`);
+
+  const video = new Video({
+    ...req.body,
+    source: videoURL,
+    thumbnail: thumbnailURL,
+    duration,
+    _user: req.user.id,
+  });
+  await video.save();
+
+  res.json(video);
+
+  // Cleanup temp files on disk
+  try {
+    fs.unlinkSync(videoPath);
+    fs.unlinkSync(thumbnailPath);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 module.exports = uploadVideo;

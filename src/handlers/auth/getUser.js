@@ -1,5 +1,5 @@
-function getCurrentUser(req, res) {
+function getUser(req, res) {
   res.json(req.user);
 }
 
-module.exports = getCurrentUser;
+module.exports = getUser;
