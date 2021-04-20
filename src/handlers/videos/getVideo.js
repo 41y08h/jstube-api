@@ -7,7 +7,7 @@ async function getVideo(req, res) {
 
   if (!isValidId) res.clientError("Video id is not valid");
 
-  const foundVideo = await Video.find({ _id: requestedVideoId });
+  const foundVideo = await Video.findOne({ _id: requestedVideoId });
   if (foundVideo) return res.json(foundVideo);
 
   res.status(404);
