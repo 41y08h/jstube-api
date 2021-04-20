@@ -3,4 +3,5 @@ node_modules
 ffmpeg.exe
 ffprobe.exe
 temp/*
+!.stay
 pg.js
