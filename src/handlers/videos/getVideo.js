@@ -1,9 +1,13 @@
-const data = require("../../data");
+const mongoose = require("mongoose");
+const Video = require("../../models/Video");
 
-function getVideo(req, res) {
+async function getVideo(req, res) {
   const requestedVideoId = req.params.id;
+  const isValidId = mongoose.isValidObjectId(requestedVideoId);
 
-  const foundVideo = data.find((video) => video.id == requestedVideoId);
+  if (!isValidId) res.clientError("Video id is not valid");
+
+  const foundVideo = await Video.find({ _id: requestedVideoId });
   if (foundVideo) return res.json(foundVideo);
 
   res.status(404);

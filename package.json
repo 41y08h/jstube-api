@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node src",
-    "dev": "nodemon -r dotenv/config src"
+    "dev": "nodemon -r dotenv/config src",
+    "seeder": "node -r dotenv/config seeder"
   },
   "author": "Piyush",
   "license": "MIT",

@@ -8,10 +8,9 @@ const debug = require("debug")("app");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const errorHandler = require("./middlewares/errorHandler");
-
-// Start services
-require("./services/database");
-require("./services/passport");
+const clientErrors = require("./middlewares/clientErrors");
+const connectDb = require("./services/connectDb");
+const configurePassport = require("./services/configurePassport");
 
 const app = express();
 
@@ -23,6 +22,7 @@ app
   .use(cookieParser())
   .use(fileUpload())
   .use(helmet())
+  .use(clientErrors)
   .use(routes)
   .use(errorHandler);
 
@@ -31,4 +31,9 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.listen(process.env.PORT, () => debug(`⚡ Started on ${process.env.PORT}`));
+configurePassport();
+connectDb().then(() => {
+  app.listen(process.env.PORT, () =>
+    debug(`⚡ Started on ${process.env.PORT}`)
+  );
+});
