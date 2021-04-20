@@ -6,24 +6,26 @@ const getVideoMetaData = require("../../lib/getVideoMetaData");
 const generateThumbnail = require("../../lib/generateThumbnail");
 const uploadToCloud = require("../../lib/uploadToCloud");
 
+function throwClientError(res, message) {
+  res.status(400);
+  throw new Error(message);
+}
+
 async function uploadVideo(req, res) {
-  if (req.files === null) {
-    res.status(400);
-    throw new Error("No file was found.");
-  }
+  if (req.files === null) throwClientError(res, "No file was found");
+
   const file = req.files.file;
 
   // Terminate early with file size above 50mb
-  if (file.mimetype !== "video/mp4") {
-    res.status(400);
-    throw new Error("File must be of the type mp4.");
-  }
+  if (file.mimetype !== "video/mp4")
+    throwClientError(res, "File must be of the type mp4");
 
   // Terminate early with file size above 50mb
-  if (file.size > 5e7) {
-    res.status(400);
-    throw new Error("File size must not exceed 50MB.");
-  }
+  if (file.size > 5e7) throwClientError(res, "File size must not exceed 50MB");
+
+  // Validate form data
+  if (!req.body.title) throwClientError(res, "Title is required");
+  if (!req.body.description) throwClientError(res, "Description is required");
 
   const filename = uuid();
   const tempDir = path.join(__dirname, "../../../temp");
@@ -50,8 +52,12 @@ async function uploadVideo(req, res) {
   const videoURL = await uploadToCloud(videoFile, `${filename}.mp4`);
   const thumbnailURL = await uploadToCloud(thumbnailFile, `${filename}.png`);
 
+  // Save in database
+  const { title, description } = req.body;
+
   const video = new Video({
-    ...req.body,
+    title,
+    description,
     source: videoURL,
     thumbnail: thumbnailURL,
     duration,
