@@ -18,7 +18,7 @@ declare global {
       clientError(message: string, code?: number): Error;
     }
     interface Request {
-      currentUser: IUser | null;
+      currentUser: IUser | undefined;
     }
   }
 }

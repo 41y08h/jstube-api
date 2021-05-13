@@ -6,7 +6,7 @@ const validateIdParam: RequestHandler = (req, res, next) => {
 
   if (mongoose.isValidObjectId(id)) return next();
 
-  throw res.clientError(400, "Id not valid");
+  throw res.clientError("Id not valid");
 };
 
 export default validateIdParam;

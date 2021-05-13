@@ -6,5 +6,5 @@ export default asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId);
   if (video) return res.json(video);
 
-  throw res.clientError(404, "Video not found");
+  throw res.clientError("Video not found", 404);
 });
