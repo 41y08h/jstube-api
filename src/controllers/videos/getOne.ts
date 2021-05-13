@@ -1,0 +1,10 @@
+import asyncHandler from "../../lib/asyncHandler";
+import Video from "../../models/Video";
+
+export default asyncHandler(async (req, res) => {
+  const videoId = req.params.id;
+  const video = await Video.findById(videoId);
+  if (video) return res.json(video);
+
+  throw res.clientError(404, "Video not found");
+});

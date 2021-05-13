@@ -1,3 +1,3 @@
-# JsTube API
+# JsTube API Mark 2
 
-API for 📺 YouTube Clone written entirely in 👨‍💻 Node.js.
+Mark 2

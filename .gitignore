@@ -1,7 +1,5 @@
-node_modules
 .env
-ffmpeg.exe
-ffprobe.exe
-temp/*
-!.stay
-pg.js
+node_modules
+build
+yarn-error.log
+ffmpeg
