@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "scripts": {
     "prestart": "npx rimraf build/*",
-    "start": "tsc && node ./build/index.js",
+    "tsc": "tsc",
+    "start": "yarn tsc && node ./build/index.js",
     "dev": "nodemon --transpile-only src/index.ts",
     "seed": "npx ts-node src/seeder"
   },
