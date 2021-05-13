@@ -4,11 +4,11 @@
   "main": "src/index.ts",
   "scripts": {
     "clean": "npx rimraf build/*",
-    "build": "yarn clean && tsc",
+    "build": "yarn clean && npx tsc",
     "prestart": "yarn build",
     "start": "node build",
     "dev": "nodemon --transpile-only src/index.ts",
-    "seed": "ts-node src/seeder"
+    "seed": "npx ts-node src/seeder"
   },
   "author": "Piyush",
   "license": "MIT",
