@@ -5,17 +5,21 @@ import validateIdParam from "../middlewares/validateIdParam";
 
 const subscription = Router();
 
-subscription.get("/:id", validateIdParam, SubscriptionController.getDetails);
+subscription.get(
+  "/:channelId",
+  validateIdParam("channelId"),
+  SubscriptionController.getDetails
+);
 subscription.post(
-  "/:id",
+  "/:channelId",
   authenticate,
-  validateIdParam,
+  validateIdParam("channelId"),
   SubscriptionController.subscribe
 );
 subscription.delete(
-  "/:id",
+  "/:channelId",
   authenticate,
-  validateIdParam,
+  validateIdParam("channelId"),
   SubscriptionController.unsubscribe
 );
 

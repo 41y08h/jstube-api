@@ -2,12 +2,17 @@ import { RequestHandler } from "express";
 import mongoose from "mongoose";
 import asyncHandler from "../lib/asyncHandler";
 
-const validateIdParam: RequestHandler = asyncHandler((req, res, next) => {
-  const id = req.params.id || req.query.id;
+const validateIdParam: (...idKeys: string[]) => RequestHandler = (...idKeys) =>
+  asyncHandler((req, res, next) => {
+    idKeys.forEach((idKey) => {
+      const id = req.params[idKey];
 
-  if (mongoose.isValidObjectId(id)) return next();
+      // If not valid id, send unprocessable entity status
+      if (!mongoose.isValidObjectId(id))
+        throw res.clientError(`${idKey} not valid.`, 422);
+    });
 
-  throw res.clientError("Id not valid");
-});
+    next();
+  });
 
 export default validateIdParam;

@@ -5,18 +5,27 @@ import validateIdParam from "../middlewares/validateIdParam";
 
 const rating = Router();
 
-rating.get("/:id", validateIdParam, RatingController.getDetails);
-rating.post("/:id/like", authenticate, validateIdParam, RatingController.like);
+rating.get(
+  "/:videoId",
+  validateIdParam("videoId"),
+  RatingController.getDetails
+);
 rating.post(
-  "/:id/dislike",
+  "/:videoId",
   authenticate,
-  validateIdParam,
+  validateIdParam("videoId"),
+  RatingController.like
+);
+rating.post(
+  "/:videoId/dislike",
+  authenticate,
+  validateIdParam("/:videoId"),
   RatingController.dislike
 );
 rating.delete(
-  "/:id",
+  "/:videoId",
   authenticate,
-  validateIdParam,
+  validateIdParam("/:videoId"),
   RatingController.removeRating
 );
 

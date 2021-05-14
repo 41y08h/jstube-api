@@ -3,7 +3,7 @@ import SubscriptionService from "../../services/subscription";
 
 export default asyncHandler(async (req, res) => {
   const userId = req.currentUser?.id as string;
-  const channelId = req.params.id;
+  const { channelId } = req.params;
 
   try {
     await SubscriptionService.subscribe({ userId, channelId });
