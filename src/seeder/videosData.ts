@@ -5,7 +5,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
     title: "Big Buck Bunny",
-    id: 1,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     duration: 215,
@@ -16,11 +15,9 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
     title: "Elephant Dream",
-    id: 2,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     duration: 140,
-    views: 8422,
   },
   {
     description:
@@ -28,7 +25,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
     title: "For Bigger Blazes",
-    id: 3,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     duration: 40,
@@ -40,7 +36,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg",
     title: "For Bigger Escape",
-    id: 4,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
     duration: 640,
@@ -52,7 +47,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
     title: "For Bigger Fun",
-    id: 5,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
     duration: 314,
@@ -64,7 +58,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
     title: "For Bigger Joyrides",
-    id: 6,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
     duration: 180,
@@ -76,7 +69,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg",
     title: "For Bigger Meltdowns",
-    id: 7,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
     duration: 157,
@@ -88,7 +80,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg",
     title: "Sintel",
-    id: 8,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
     duration: 875,
@@ -100,7 +91,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg",
     title: "Subaru Outback On Street And Dirt",
-    id: 9,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
     duration: 5474,
@@ -112,7 +102,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg",
     title: "Tears of Steel",
-    id: 10,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
     duration: 1478,
@@ -124,7 +113,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg",
     title: "Volkswagen GTI Review",
-    id: 11,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
     duration: 2015,
@@ -136,7 +124,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg",
     title: "We Are Going On Bullrun",
-    id: 12,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
     duration: 187,
@@ -148,7 +135,6 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg",
     title: "What care can you get for a grand?",
-    id: 13,
     source:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
     duration: 69,

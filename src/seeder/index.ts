@@ -4,6 +4,8 @@ import Video from "../models/Video";
 import DatabaseService from "../services/database";
 import videosData from "./videosData";
 import createDebug from "debug";
+import Subscriber from "../models/Subscriber";
+import Rating from "../models/Rating";
 
 (async () => {
   const debug = createDebug("app:seeder");
@@ -13,6 +15,8 @@ import createDebug from "debug";
   // Clean database
   await User.deleteMany({});
   await Video.deleteMany({});
+  await Subscriber.deleteMany({});
+  await Rating.deleteMany({});
 
   debug("🧹 Cleaned database");
 

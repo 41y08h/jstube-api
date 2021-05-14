@@ -1,5 +1,5 @@
 @api = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiJ9.NjA5YjhlMjM1ZjhlODIyZDQwYmZhMjU5.HkVcDGoPUNlaY-SjYoXp6wxVGenm9hlC5DSpPby694I
+@token = eyJhbGciOiJIUzI1NiJ9.NjA5ZGNmYTAwNzRhYjIxNmM4OWQ0YTY5.6BhYzzUTXry_3WHE2vVRwihQBXkqrSEnQdsi7zyYZ4g
 
 // -> Videos
 GET {{api}}/videos
@@ -16,4 +16,17 @@ Cookie: token={{token}}
 ###
 DELETE {{api}}/rating/609b8bb2f0b7661c3035c5aa
 Cookie: token={{token}}
+
+###
+// -> Subscription
+GET {{api}}/subscription/609b8bb2f0b7661c3035c5a9
+Cookie: token={{token}}
+
+###
+POST {{api}}/subscription/609b8bb2f0b7661c3035c5a9
+Cookie: token={{token}}
+###
+DELETE {{api}}/subscription/609b8bb2f0b7661c3035c5a9
+Cookie: token={{token}}
+
 
