@@ -5,6 +5,7 @@ import validateIdParam from "../middlewares/validateIdParam";
 
 const rating = Router();
 
+rating.get("/:id", validateIdParam, RatingController.getDetails);
 rating.post("/:id/like", authenticate, validateIdParam, RatingController.like);
 rating.post(
   "/:id/dislike",

@@ -8,6 +8,9 @@ GET {{api}}/videos/609b8bb2f0b7661c3035c5aa
 ###
 
 // -> Rating
+GET {{api}}/rating/609b8bb2f0b7661c3035c5aa/
+Cookie: token={{token}}
+###
 POST {{api}}/rating/609b8bb2f0b7661c3035c5aa/like
 Cookie: token={{token}}
 ###

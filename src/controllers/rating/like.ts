@@ -7,7 +7,7 @@ export default asyncHandler(async (req, res) => {
 
   try {
     await RatingService.like({ videoId, userId });
-    const ratingDetails = await RatingService.getRatingDetails({
+    const ratingDetails = await RatingService.getDetails({
       videoId,
       userId,
     });

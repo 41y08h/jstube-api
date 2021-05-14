@@ -3,12 +3,12 @@ import RatingService from "../../services/rating";
 
 export default asyncHandler(async (req, res) => {
   const videoId = req.params.id;
-  const userId = req.currentUser?.id as string;
+  const userId = req.currentUser?.id;
 
-  await RatingService.removeRating({ userId, videoId });
   const ratingDetails = await RatingService.getDetails({
-    userId,
     videoId,
+    userId,
   });
+
   res.json(ratingDetails);
 });
