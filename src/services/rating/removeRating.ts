@@ -1,11 +1,21 @@
 import Rating from "../../models/Rating";
+import RatingItemType from "../../types/RatingItemType";
 
 export default async function removeRating({
+  itemId,
   userId,
-  videoId,
+  itemType,
 }: {
+  itemId: string;
   userId: string;
-  videoId: string;
+  itemType: RatingItemType;
 }): Promise<void> {
-  await Rating.deleteOne({ _user: userId, _video: videoId });
+  const isVideoRating = itemType === "VIDEO";
+
+  const itemPayload = {
+    _video: isVideoRating ? itemId : undefined,
+    _comment: isVideoRating ? undefined : itemId,
+  };
+
+  await Rating.deleteOne({ ...itemPayload, _user: userId });
 }

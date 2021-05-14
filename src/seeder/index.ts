@@ -13,7 +13,6 @@ import Rating from "../models/Rating";
   await DatabaseService.connect();
 
   // Clean database
-  await User.deleteMany({});
   await Video.deleteMany({});
   await Subscriber.deleteMany({});
   await Rating.deleteMany({});

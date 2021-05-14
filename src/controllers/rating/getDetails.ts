@@ -2,13 +2,23 @@ import asyncHandler from "../../lib/asyncHandler";
 import RatingService from "../../services/rating";
 
 export default asyncHandler(async (req, res) => {
-  const { videoId } = req.params;
-  const userId = req.currentUser?.id;
+  const itemType = req.query.type;
 
-  const ratingDetails = await RatingService.getDetails({
-    videoId,
-    userId,
-  });
+  if (!(itemType === "COMMENT" || itemType === "VIDEO"))
+    throw res.clientError("Type must be COMMENT or VIDEO.");
 
-  res.json(ratingDetails);
+  const { itemId } = req.params;
+  const userId = req.currentUser?.id as string;
+
+  try {
+    const ratingDetails = await RatingService.getDetails({
+      itemId,
+      userId,
+      itemType,
+    });
+
+    res.json(ratingDetails);
+  } catch (err) {
+    throw res.clientError(err.message);
+  }
 });

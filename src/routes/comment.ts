@@ -15,9 +15,9 @@ comment.post(
 );
 
 comment.delete(
-  "/:videoId",
+  "/:commentId",
   authenticate,
-  validateIdParam("videoId"),
+  validateIdParam("commentId"),
   CommentController.remove
 );
 

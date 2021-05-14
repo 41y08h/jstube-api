@@ -6,6 +6,14 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Video",
   },
+  _comment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Comment",
+  },
+  itemType: {
+    type: String,
+    required: true,
+  },
   _user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
