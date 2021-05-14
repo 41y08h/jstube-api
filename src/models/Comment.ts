@@ -17,8 +17,9 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    editedAt: {
-      type: Date,
+    _replyTo: {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
     },
   },
   { timestamps: true }

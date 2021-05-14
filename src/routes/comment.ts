@@ -28,4 +28,12 @@ comment.patch(
   CommentController.edit
 );
 
+// Reply
+comment.post(
+  "/reply/:commentId",
+  authenticate,
+  validateIdParam("/:commentId"),
+  CommentController.reply
+);
+
 export default comment;

@@ -36,12 +36,12 @@ Cookie: token={{token}}
 // -> Subscription
 GET {{api}}/comment/609b8bb2f0b7661c3035c5a9
 ###
-POST {{api}}/comment/609b8bb2f0b7661c3035c5a9
+POST {{api}}/comment/609e868b962a3714d0933195
 Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Hey"
+    "text": "new"
 }
 ###
 PATCH  {{api}}/comment/609e7cf2e867e720f40ac476
@@ -54,4 +54,14 @@ Content-Type: application/json
 ###
 DELETE  {{api}}/comment/609b8bb2f0b7661c3035c5a9
 Cookie: token={{token}}
+###
+
+# Reply
+POST  {{api}}/comment/reply/609e85c65a62cc13541419fd
+Cookie: token={{token}}
+Content-Type: application/json
+
+{
+    "text": "Reply Hey307"
+}
 
