@@ -6,6 +6,7 @@ export default async function connect() {
   const options: ConnectOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   };
 
   await mongoose.connect(process.env.MONGO_URI as string, options);

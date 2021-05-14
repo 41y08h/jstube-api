@@ -21,4 +21,11 @@ comment.delete(
   CommentController.remove
 );
 
+comment.patch(
+  "/:id",
+  authenticate,
+  validateIdParam("id"),
+  CommentController.edit
+);
+
 export default comment;
