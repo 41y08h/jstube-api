@@ -5,6 +5,8 @@ import validateIdParam from "../middlewares/validateIdParam";
 
 const comment = Router();
 
+comment.get("/:videoId", validateIdParam("videoId"), CommentController.getAll);
+
 comment.post(
   "/:videoId",
   authenticate,
