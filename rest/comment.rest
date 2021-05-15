@@ -1,7 +1,7 @@
 @api = http://localhost:5000
 @token = eyJhbGciOiJIUzI1NiJ9.NjA5ZGNmYTAwNzRhYjIxNmM4OWQ0YTY5.6BhYzzUTXry_3WHE2vVRwihQBXkqrSEnQdsi7zyYZ4g
 @videoId = 609ea0a48d22892130792200
-@commentId = 609f57d744be5320dc98bdc5
+@commentId = 609f6c0a2d180f1570794d28
 
 
 // -> Comment
@@ -12,7 +12,7 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "new"
+    "text": "5"
 }
 ###
 PATCH  {{api}}/comment/{{commentId}}
@@ -35,5 +35,5 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Reply Hey307"
+    "text": "Reply 5 -2"
 }
