@@ -1,0 +1,13 @@
+@api = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiJ9.NjA5ZGNmYTAwNzRhYjIxNmM4OWQ0YTY5.6BhYzzUTXry_3WHE2vVRwihQBXkqrSEnQdsi7zyYZ4g
+@userId = 609ea0a48d228921307921ff
+
+GET {{api}}/subscription/{{userId}}
+Cookie: token={{token}}
+###
+POST {{api}}/subscription/{{userId}}
+Cookie: token={{token}}
+###
+DELETE {{api}}/subscription/{{userId}}
+Cookie: token={{token}}
+###

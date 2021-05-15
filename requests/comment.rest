@@ -1,0 +1,38 @@
+@api = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiJ9.NjA5ZGNmYTAwNzRhYjIxNmM4OWQ0YTY5.6BhYzzUTXry_3WHE2vVRwihQBXkqrSEnQdsi7zyYZ4g
+@videoId = 609ea0a48d22892130792200
+@commentId = 609ea7aba7107514dcdf5f14
+
+
+
+// -> Comment
+GET {{api}}/comment/{{videoId}}
+###
+POST {{api}}/comment/{{videoId}}
+Cookie: token={{token}}
+Content-Type: application/json
+
+{
+    "text": "new"
+}
+###
+PATCH  {{api}}/comment/{{commentId}}
+Cookie: token={{token}}
+Content-Type: application/json
+
+{
+    "text": "Lookin for graphql"
+}
+###
+DELETE  {{api}}/comment/{{commentId}}
+Cookie: token={{token}}
+###
+
+# -> Comment: Reply
+POST  {{api}}/comment/reply/{{commentId}}
+Cookie: token={{token}}
+Content-Type: application/json
+
+{
+    "text": "Reply Hey307"
+}
