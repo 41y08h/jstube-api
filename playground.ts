@@ -11,9 +11,28 @@ import Comment from "./src/models/Comment";
       $lookup: {
         from: "comments",
         localField: "_id",
-        foreignField: "_replyTo",
-        pipeline: [{}],
+        foreignField: "_baseComment",
         as: "replies",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_user",
+        foreignField: "_id",
+        as: "_user",
+      },
+    },
+    { $unwind: "$_user" },
+    {
+      $project: {
+        "_user.name": 1,
+        "_user.picture": 1,
+        text: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        _video: 1,
+        replyCount: { $size: "$replies" },
       },
     },
   ]);
