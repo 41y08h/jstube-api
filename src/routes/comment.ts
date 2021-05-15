@@ -29,6 +29,11 @@ comment.patch(
 );
 
 // Reply
+comment.get(
+  "/reply/:commentId",
+  validateIdParam("/:commentId"),
+  CommentController.getAllReplies
+);
 comment.post(
   "/reply/:commentId",
   authenticate,

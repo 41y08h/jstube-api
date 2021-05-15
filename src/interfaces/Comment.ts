@@ -6,7 +6,7 @@ export default interface IComment extends Document {
   _video: IVideo | string;
   _user: IUser | string;
   text: string;
-  _replyTo?: this;
+  _replyTo?: this | string;
   createdAt: Date;
   updatedAt?: Date;
 }

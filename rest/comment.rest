@@ -28,6 +28,8 @@ Cookie: token={{token}}
 ###
 
 # -> Comment: Reply
+GET {{api}}/comment/reply/{{commentId}}
+###
 POST  {{api}}/comment/reply/{{commentId}}
 Cookie: token={{token}}
 Content-Type: application/json
