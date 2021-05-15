@@ -5,5 +5,4 @@ GET {{api}}/videos
 ###
 GET {{api}}/videos/{{videoId}}
 ###
-
 // POST {{api}}/videos 
