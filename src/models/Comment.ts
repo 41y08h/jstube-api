@@ -21,6 +21,10 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Comment",
     },
+    _baseComment: {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
   },
   { timestamps: true }
 );

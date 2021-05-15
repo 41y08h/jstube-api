@@ -7,6 +7,7 @@ export default interface IComment extends Document {
   _user: IUser | string;
   text: string;
   _replyTo?: this | string;
+  _baseComment?: this | string;
   createdAt: Date;
   updatedAt?: Date;
 }
