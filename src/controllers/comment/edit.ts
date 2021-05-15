@@ -13,8 +13,8 @@ export default asyncHandler(async (req, res) => {
     { text }
   );
 
-  if (status.ok === 1)
+  if (status.n === 1)
     return res.json(await Comment.findOne({ _id: commentId }));
 
-  throw res.clientError("Something went wrong.");
+  throw res.clientError("Comment not found.", 404);
 });
