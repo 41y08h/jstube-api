@@ -1,7 +1,7 @@
 @api = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiJ9.NjA5ZGNmYTAwNzRhYjIxNmM4OWQ0YTY5.6BhYzzUTXry_3WHE2vVRwihQBXkqrSEnQdsi7zyYZ4g
-@videoId = 609ea0a48d22892130792200
-@commentId = 609f706efe675121b844ac13
+@token = eyJhbGciOiJIUzI1NiJ9.NQ.7lWaaY_hpcvuiQWjQJCyXxi5V9sSKqQE5KYFsG7TRaY
+@videoId = 1
+@commentId = 4
 
 
 // -> Comment
@@ -12,7 +12,7 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "5"
+    "text": "Hey this is a nicer comment"
 }
 ###
 PATCH  {{api}}/comment/{{commentId}}
@@ -20,7 +20,7 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Lookin for graphql"
+    "text": "Hey this is a nicer comment which is edited 2nd time"
 }
 ###
 DELETE  {{api}}/comment/{{commentId}}

@@ -8,12 +8,13 @@ datasource db {
 }
 
 model users {
-  id       Int      @id @default(autoincrement())
-  name     String   @db.VarChar(255)
-  email    String   @unique @db.VarChar(255)
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(255)
+  email    String     @unique @db.VarChar(255)
   picture  String?
-  provider String   @db.VarChar(20)
-  pid      String   @db.VarChar(100)
+  provider String     @db.VarChar(20)
+  pid      String     @db.VarChar(100)
+  comments comments[]
   videos   videos[]
 }
 
@@ -25,7 +26,23 @@ model videos {
   thumbnail   String
   duration    Int
   user_id     Int?
-  id          Int    @id @default(autoincrement())
-  views       Int?   @default(0)
-  user        users? @relation(fields: [user_id], references: [id])
+  id          Int        @id @default(autoincrement())
+  views       Int?       @default(0)
+  user        users?     @relation(fields: [user_id], references: [id])
+  comments    comments[]
+}
+
+model comments {
+  id                                                 Int        @id @default(autoincrement())
+  text                                               String
+  video_id                                           Int
+  user_id                                            Int
+  reply_to_comment                                   Int?
+  base_comment                                       Int?
+  comments_commentsTocomments_base_comment           comments?  @relation("commentsTocomments_base_comment", fields: [base_comment], references: [id])
+  comments_commentsTocomments_reply_to_comment       comments?  @relation("commentsTocomments_reply_to_comment", fields: [reply_to_comment], references: [id])
+  user                                               users      @relation(fields: [user_id], references: [id])
+  video                                              videos     @relation(fields: [video_id], references: [id])
+  other_comments_commentsTocomments_base_comment     comments[] @relation("commentsTocomments_base_comment")
+  other_comments_commentsTocomments_reply_to_comment comments[] @relation("commentsTocomments_reply_to_comment")
 }

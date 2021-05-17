@@ -5,14 +5,9 @@ import validateIdParam from "../middlewares/validateIdParam";
 
 const comment = Router();
 
-comment.get("/:videoId", validateIdParam("videoId"), CommentController.getAll);
+comment.get("/:videoId", CommentController.getAll);
 
-comment.post(
-  "/:videoId",
-  authenticate,
-  validateIdParam("videoId"),
-  CommentController.comment
-);
+comment.post("/:videoId", authenticate, CommentController.comment);
 
 comment.delete(
   "/:commentId",
@@ -21,12 +16,7 @@ comment.delete(
   CommentController.remove
 );
 
-comment.patch(
-  "/:id",
-  authenticate,
-  validateIdParam("id"),
-  CommentController.edit
-);
+comment.patch("/:id", authenticate, CommentController.edit);
 
 // Reply
 comment.get(

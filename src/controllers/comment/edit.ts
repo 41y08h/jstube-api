@@ -1,20 +1,24 @@
+import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
-import Comment from "../../models/Comment";
 
 export default asyncHandler(async (req, res) => {
-  const { id: commentId } = req.params;
-  const userId = req.currentUser?.id as string;
+  const commentId = parseInt(req.params.id);
+  const userId = req.currentUser?.id as number;
 
   const { text } = req.body;
 
   if (!text) throw res.clientError("Text field is required.", 422);
-  const status = await Comment.updateOne(
-    { _id: commentId, _user: userId },
-    { text }
-  );
 
-  if (status.n === 1)
-    return res.json(await Comment.findOne({ _id: commentId }));
+  const prisma = new PrismaClient();
+  const status = await prisma.comments.updateMany({
+    where: { id: commentId, user_id: userId },
+    data: { text },
+  });
 
-  throw res.clientError("Comment not found.", 404);
+  if (status.count)
+    return res.json(
+      await prisma.comments.findFirst({ where: { id: commentId } })
+    );
+
+  throw res.clientError("Something went wrong", 422);
 });
