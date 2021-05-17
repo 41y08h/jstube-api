@@ -18,7 +18,7 @@ export default asyncHandler(async (req, res) => {
   const video = await VideosService.upload({
     file,
     body: req.body,
-    userId: req.currentUser?.id,
+    userId: req.currentUser?.id as number,
   });
 
   res.json(video);

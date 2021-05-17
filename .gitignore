@@ -3,3 +3,6 @@ node_modules
 build
 yarn-error.log
 ffmpeg
+temp
+!temp/.gitkeep
+

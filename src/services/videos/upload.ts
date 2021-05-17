@@ -6,8 +6,8 @@ import getVideoMetaData from "./getVideoMetaData";
 import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
 import uploadToCloud from "../../lib/uploadToCloud";
-import Video from "../../models/Video";
-import IVideo from "../../interfaces/Video";
+import { videos } from ".prisma/client";
+import { PrismaClient } from ".prisma/client";
 
 export default async function uplaoad({
   file,
@@ -15,9 +15,12 @@ export default async function uplaoad({
   userId,
 }: {
   file: UploadedFile;
-  body: IVideoUploadBody;
-  userId: string;
-}): Promise<IVideo> {
+  body: {
+    title: string;
+    description: string;
+  };
+  userId: number;
+}): Promise<videos> {
   const fileId = uuid();
   const videoFilename = `${fileId}.mp4`;
   const thumbnailFilename = `${fileId}.png`;
@@ -43,15 +46,18 @@ export default async function uplaoad({
   // Save in database
   const { title, description } = body;
 
-  const video = new Video({
-    title,
-    description,
-    source: videoURL,
-    thumbnail: thumbnailURL,
-    duration: metadata.duration,
-    _user: userId,
+  const prisma = new PrismaClient();
+
+  const video = await prisma.videos.create({
+    data: {
+      title,
+      description,
+      src: videoURL,
+      thumbnail: thumbnailURL,
+      duration: parseInt(metadata.duration as string),
+      user_id: userId,
+    },
   });
-  await video.save();
 
   // Cleanup temp files on disk
   try {
