@@ -19,11 +19,6 @@ comment.get(
   validateIdParam("/:commentId"),
   CommentController.getAllReplies
 );
-comment.post(
-  "/reply/:commentId",
-  authenticate,
-  validateIdParam("/:commentId"),
-  CommentController.reply
-);
+comment.post("/reply/:id", authenticate, CommentController.reply);
 
 export default comment;

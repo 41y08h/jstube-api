@@ -35,5 +35,5 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Reply 5 -3"
+    "text": "This is a SOLID reply to the nicer comment which has done some mutations"
 }

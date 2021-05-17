@@ -33,16 +33,16 @@ model videos {
 }
 
 model comments {
-  id                                                 Int        @id @default(autoincrement())
-  text                                               String
-  video_id                                           Int
-  user_id                                            Int
-  reply_to_comment                                   Int?
-  base_comment                                       Int?
-  comments_commentsTocomments_base_comment           comments?  @relation("commentsTocomments_base_comment", fields: [base_comment], references: [id])
-  comments_commentsTocomments_reply_to_comment       comments?  @relation("commentsTocomments_reply_to_comment", fields: [reply_to_comment], references: [id])
-  user                                               users      @relation(fields: [user_id], references: [id])
-  video                                              videos     @relation(fields: [video_id], references: [id])
-  other_comments_commentsTocomments_base_comment     comments[] @relation("commentsTocomments_base_comment")
-  other_comments_commentsTocomments_reply_to_comment comments[] @relation("commentsTocomments_reply_to_comment")
+  id                                                    Int        @id @default(autoincrement())
+  text                                                  String
+  video_id                                              Int
+  user_id                                               Int
+  reply_to_comment_id                                   Int?
+  base_comment_id                                       Int?
+  comments_commentsTocomments_base_comment_id           comments?  @relation("commentsTocomments_base_comment_id", fields: [base_comment_id], references: [id])
+  comments_commentsTocomments_reply_to_comment_id       comments?  @relation("commentsTocomments_reply_to_comment_id", fields: [reply_to_comment_id], references: [id])
+  user                                                  users      @relation(fields: [user_id], references: [id])
+  video                                                 videos     @relation(fields: [video_id], references: [id])
+  other_comments_commentsTocomments_base_comment_id     comments[] @relation("commentsTocomments_base_comment_id")
+  other_comments_commentsTocomments_reply_to_comment_id comments[] @relation("commentsTocomments_reply_to_comment_id")
 }
