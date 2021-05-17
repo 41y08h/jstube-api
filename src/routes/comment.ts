@@ -9,12 +9,7 @@ comment.get("/:videoId", CommentController.getAll);
 
 comment.post("/:videoId", authenticate, CommentController.comment);
 
-comment.delete(
-  "/:commentId",
-  authenticate,
-  validateIdParam("commentId"),
-  CommentController.remove
-);
+comment.delete("/:id", authenticate, CommentController.remove);
 
 comment.patch("/:id", authenticate, CommentController.edit);
 

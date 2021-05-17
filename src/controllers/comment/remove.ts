@@ -1,18 +1,15 @@
+import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
-import Comment from "../../models/Comment";
 
 export default asyncHandler(async (req, res) => {
-  const commentId = req.params.commentId;
-  const userId = req.currentUser?.id as string;
+  const commentId = parseInt(req.params.id);
+  const userId = req.currentUser?.id as number;
 
-  const exists = await Comment.exists({ _id: commentId });
-  if (!exists) throw res.clientError("Comment not found.", 404);
+  const prisma = new PrismaClient();
+  const status = await prisma.comments.deleteMany({
+    where: { id: commentId, user_id: userId },
+  });
 
-  // Delete replies
-  await Comment.deleteMany({ _replyTo: commentId });
-
-  const status = await Comment.deleteOne({ _id: commentId, _user: userId });
-  if (status.n === 1) return res.sendStatus(200);
-
-  throw res.clientError("Something went wrong.");
+  if (status.count) return res.sendStatus(200);
+  throw res.clientError("Something went wrong", 422);
 });
