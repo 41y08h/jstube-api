@@ -1,0 +1,5 @@
+@api = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiJ9.NQ.7lWaaY_hpcvuiQWjQJCyXxi5V9sSKqQE5KYFsG7TRaY
+
+GET {{api}}/auth/user
+Cookie: token={{token}}

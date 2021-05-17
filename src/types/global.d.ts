@@ -1,3 +1,4 @@
+import { users } from ".prisma/client";
 import IUser from "../interfaces/User";
 
 declare global {
@@ -18,7 +19,7 @@ declare global {
       clientError(message: string, code?: number): Error;
     }
     interface Request {
-      currentUser: IUser | undefined;
+      currentUser?: users;
     }
   }
 }

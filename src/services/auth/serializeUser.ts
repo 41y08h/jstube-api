@@ -1,8 +1,8 @@
-import IUser from "../../interfaces/User";
+import { users } from ".prisma/client";
 import jwt from "jsonwebtoken";
 
-export default function serializeUser(user?: IUser) {
+export default function serializeUser(user: users) {
   if (!user) return null;
-  const token = jwt.sign(user.id, process.env.JWT_SECRET);
+  const token = jwt.sign(user.id.toString(), process.env.JWT_SECRET);
   return token;
 }
