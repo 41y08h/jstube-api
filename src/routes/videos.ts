@@ -5,7 +5,7 @@ import validateIdParam from "../middlewares/validateIdParam";
 
 const videos = Router();
 
-videos.get("/:id", validateIdParam("id"), VideosController.getOne);
+videos.get("/:id", VideosController.getOne);
 videos.get("/", VideosController.getAll);
 videos.post("/", authenticate, VideosController.upload);
 

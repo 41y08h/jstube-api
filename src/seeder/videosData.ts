@@ -5,8 +5,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
     title: "Big Buck Bunny",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     duration: 215,
     views: 554871,
   },
@@ -15,8 +14,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
     title: "Elephant Dream",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     duration: 140,
   },
   {
@@ -25,8 +23,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
     title: "For Bigger Blazes",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     duration: 40,
     views: 1547,
   },
@@ -36,8 +33,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg",
     title: "For Bigger Escape",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
     duration: 640,
     views: 842982,
   },
@@ -47,8 +43,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
     title: "For Bigger Fun",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
     duration: 314,
     views: 87842,
   },
@@ -58,8 +53,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
     title: "For Bigger Joyrides",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
     duration: 180,
     views: 148059,
   },
@@ -69,19 +63,17 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg",
     title: "For Bigger Meltdowns",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
     duration: 157,
     views: 302848,
   },
   {
     description:
-      "Sintel is an independently produced short film, initiated the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, developers and artists and teams all over the world.\nwww.sintel.org",
+      "Sintel is an independently produced short film, initiated the Blender Foundation as a means to further improve and validate the free/open src 3D creation suite Blender. With initial funding provided 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, developers and artists and teams all over the world.\nwww.sintel.org",
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg",
     title: "Sintel",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
     duration: 875,
     views: 84747,
   },
@@ -91,19 +83,17 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg",
     title: "Subaru Outback On Street And Dirt",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
     duration: 5474,
     views: 1487480,
   },
   {
     description:
-      "Tears of Steel was realized with crowd-funding users of the open source 3D creation tool Blender. Target was to improve and test a complete open and free pipeline for visual effects in film - and to make a compelling sci-fi film in Amsterdam, the Netherlands.  The film itself, and all raw material used for making it, have been released under the Creatieve Commons 3.0 Attribution license. Visit the tearsofsteel.org website to find out more about this, or to purchase the 4-DVD box with a lot of extras.  (CC) Blender Foundation - https://www.tearsofsteel.org",
+      "Tears of Steel was realized with crowd-funding users of the open src 3D creation tool Blender. Target was to improve and test a complete open and free pipeline for visual effects in film - and to make a compelling sci-fi film in Amsterdam, the Netherlands.  The film itself, and all raw material used for making it, have been released under the Creatieve Commons 3.0 Attribution license. Visit the tearsofsteel.org website to find out more about this, or to purchase the 4-DVD box with a lot of extras.  (CC) Blender Foundation - https://www.tearsofsteel.org",
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg",
     title: "Tears of Steel",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
     duration: 1478,
     views: 15408,
   },
@@ -113,8 +103,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg",
     title: "Volkswagen GTI Review",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
     duration: 2015,
     views: 487954,
   },
@@ -124,8 +113,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg",
     title: "We Are Going On Bullrun",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
     duration: 187,
     views: 9875154,
   },
@@ -135,8 +123,7 @@ export default [
     thumbnail:
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg",
     title: "What care can you get for a grand?",
-    source:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
     duration: 69,
     views: 26484789,
   },

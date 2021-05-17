@@ -1,45 +1,44 @@
 import "dotenv/config";
-import User from "../models/User";
-import Video from "../models/Video";
-import DatabaseService from "../services/database";
 import videosData from "./videosData";
 import createDebug from "debug";
-import Subscriber from "../models/Subscriber";
-import Rating from "../models/Rating";
+import { PrismaClient } from ".prisma/client";
 
 (async () => {
   const debug = createDebug("app:seeder");
   // Connect database
-  await DatabaseService.connect();
+  const prisma = new PrismaClient();
 
   // Clean database
-  await Video.deleteMany({});
-  await Subscriber.deleteMany({});
-  await Rating.deleteMany({});
+  await prisma.videos.deleteMany();
 
   debug("🧹 Cleaned database");
 
   // Seed dummy user
-  const dummyUser = new User({
-    name: "Tommy",
-    email: "tommy@doggy.com",
-    picture:
-      "https://i.pinimg.com/600x315/1e/75/bd/1e75bd3c03fd58f747d6b625d1ba3245.jpg",
-    provider: { name: "GOOGLE", accountId: "1864894asdas984654168a4d" },
-    subscribers: 48716487,
+  const dummyUser = await prisma.users.create({
+    data: {
+      name: "Tommy",
+      email: "tommy@doggy.com",
+      picture:
+        "https://i.pinimg.com/600x315/1e/75/bd/1e75bd3c03fd58f747d6b625d1ba3245.jpg",
+      provider: "GOOGLE",
+      pid: "1864894asdas984654168a4d",
+    },
   });
-
-  await dummyUser.save();
 
   debug("🌱 Created a user");
 
   // Seed dummy videos
   const videosSeeds = videosData.map(async (videoData) => {
-    const video = new Video({
-      ...videoData,
-      _user: dummyUser.id,
+    const video = await prisma.videos.create({
+      data: {
+        title: videoData.title,
+        description: videoData.description,
+        thumbnail: videoData.thumbnail,
+        src: videoData.src,
+        duration: videoData.duration,
+        user_id: dummyUser.id,
+      },
     });
-    await video.save();
     debug(`🌱 Added video ${video.title}`);
   });
 

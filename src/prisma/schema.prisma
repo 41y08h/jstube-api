@@ -8,10 +8,24 @@ datasource db {
 }
 
 model users {
-  id       Int     @id @default(autoincrement())
-  name     String  @db.VarChar(255)
-  email    String  @unique @db.VarChar(255)
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(255)
+  email    String   @unique @db.VarChar(255)
   picture  String?
-  provider String  @db.VarChar(20)
-  pid      String  @db.VarChar(100)
+  provider String   @db.VarChar(20)
+  pid      String   @db.VarChar(100)
+  videos   videos[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model videos {
+  title       String
+  description String
+  src         String
+  thumbnail   String
+  duration    Int
+  user_id     Int?
+  id          Int    @id @default(autoincrement())
+  views       Int?   @default(0)
+  user        users? @relation(fields: [user_id], references: [id])
 }
