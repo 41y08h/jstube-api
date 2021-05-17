@@ -14,11 +14,7 @@ comment.delete("/:id", authenticate, CommentController.remove);
 comment.patch("/:id", authenticate, CommentController.edit);
 
 // Reply
-comment.get(
-  "/reply/:commentId",
-  validateIdParam("/:commentId"),
-  CommentController.getAllReplies
-);
+comment.get("/reply/:id", CommentController.getAllReplies);
 comment.post("/reply/:id", authenticate, CommentController.reply);
 
 export default comment;
