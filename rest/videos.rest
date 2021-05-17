@@ -3,6 +3,6 @@
 
 GET {{api}}/videos
 ###
-GET {{api}}/videos/{{videoId}}
+GET {{api}}/videos/1
 ###
 // POST {{api}}/videos 
