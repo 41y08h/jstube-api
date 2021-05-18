@@ -1,5 +1,5 @@
 @api = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiJ9.NQ.7lWaaY_hpcvuiQWjQJCyXxi5V9sSKqQE5KYFsG7TRaY
+@token = eyJhbGciOiJIUzI1NiJ9.MQ.48rVlWZkUklvo69kDnVzudXUaFjVH1IVU7asr0ia7hI
 
 GET {{api}}/auth/user
 Cookie: token={{token}}
