@@ -6,7 +6,27 @@ export default asyncHandler(async (req, res) => {
 
   const prisma = new PrismaClient();
   const comments = await prisma.comments.findMany({
-    where: { video_id: videoId },
+    where: {
+      videoId,
+      replyToCommentId: null,
+    },
+    select: {
+      id: true,
+      text: true,
+      author: {
+        select: {
+          id: true,
+          name: true,
+          picture: true,
+        },
+      },
+      _count: {
+        select: {
+          replies: true,
+        },
+      },
+    },
   });
+
   res.json(comments);
 });

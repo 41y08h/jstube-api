@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["selectRelationCount"]
 }
 
 datasource db {
@@ -18,31 +19,30 @@ model users {
   videos   videos[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model videos {
   title       String
   description String
   src         String
   thumbnail   String
   duration    Int
-  user_id     Int?
+  userId      Int?
   id          Int        @id @default(autoincrement())
   views       Int?       @default(0)
-  user        users?     @relation(fields: [user_id], references: [id])
+  channel     users?     @relation(fields: [userId], references: [id])
   comments    comments[]
 }
 
 model comments {
-  id                                                    Int        @id @default(autoincrement())
-  text                                                  String
-  video_id                                              Int
-  user_id                                               Int
-  reply_to_comment_id                                   Int?
-  base_comment_id                                       Int?
-  comments_commentsTocomments_base_comment_id           comments?  @relation("commentsTocomments_base_comment_id", fields: [base_comment_id], references: [id])
-  comments_commentsTocomments_reply_to_comment_id       comments?  @relation("commentsTocomments_reply_to_comment_id", fields: [reply_to_comment_id], references: [id])
-  user                                                  users      @relation(fields: [user_id], references: [id])
-  video                                                 videos     @relation(fields: [video_id], references: [id])
-  other_comments_commentsTocomments_base_comment_id     comments[] @relation("commentsTocomments_base_comment_id")
-  other_comments_commentsTocomments_reply_to_comment_id comments[] @relation("commentsTocomments_reply_to_comment_id")
+  id               Int        @id @default(autoincrement())
+  text             String
+  videoId          Int
+  userId           Int
+  replyToCommentId Int?
+  baseCommentId    Int?
+  baseComment      comments?  @relation("baseComment", fields: [baseCommentId], references: [id])
+  replyToComment   comments?  @relation("replyToComment", fields: [replyToCommentId], references: [id])
+  author           users      @relation(fields: [userId], references: [id])
+  videos           videos     @relation(fields: [videoId], references: [id])
+  replies          comments[] @relation("baseComment")
+  directReplies    comments[] @relation("replyToComment")
 }
