@@ -1,6 +1,5 @@
 import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
-import Comment from "../../models/Comment";
 
 export default asyncHandler(async (req, res) => {
   const commentId = parseInt(req.params.id);
@@ -10,22 +9,22 @@ export default asyncHandler(async (req, res) => {
   if (!text) throw res.clientError("Text field is required.", 422);
 
   const prisma = new PrismaClient();
-  const replyToComment = await prisma.comments.findFirst({
+  const replyToComment = await prisma.comment.findUnique({
     where: { id: commentId },
   });
   if (!replyToComment) throw res.clientError("Comment not found.", 404);
 
-  const isReplyingToBase = !Boolean(replyToComment.reply_to_comment_id);
+  const isReplyingToBase = !Boolean(replyToComment.replyToCommentId);
 
-  const replyComment = await prisma.comments.create({
+  const replyComment = await prisma.comment.create({
     data: {
       text,
-      user_id: userId,
-      video_id: replyToComment.video_id,
-      reply_to_comment_id: replyToComment.id,
-      base_comment_id: isReplyingToBase
+      userId,
+      videoId: replyToComment.videoId,
+      replyToCommentId: replyToComment.id,
+      baseCommentId: isReplyingToBase
         ? commentId
-        : replyToComment.base_comment_id,
+        : replyToComment.baseCommentId,
     },
   });
 
