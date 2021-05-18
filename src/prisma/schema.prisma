@@ -22,6 +22,7 @@ model User {
   comments          Comment[]
   videos            Video[]
   createdAt         DateTime  @default(now())
+  Rating            Rating[]
 }
 
 model Video {
@@ -37,21 +38,39 @@ model Video {
   comments    Comment[]
   uploadedAt  DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  ratings     Rating[]
 }
 
 model Comment {
   id               Int       @id @default(autoincrement())
   text             String    @db.VarChar(1000)
-  videoId          Int
-  userId           Int
-  replyToCommentId Int?
   baseCommentId    Int?
   baseComment      Comment?  @relation("baseComment", fields: [baseCommentId], references: [id])
-  replyToComment   Comment?  @relation("replyToComment", fields: [replyToCommentId], references: [id])
-  author           User      @relation(fields: [userId], references: [id])
-  commentedOnVideo Video     @relation(fields: [videoId], references: [id])
   replies          Comment[] @relation("baseComment")
+  replyToCommentId Int?
+  replyToComment   Comment?  @relation("replyToComment", fields: [replyToCommentId], references: [id])
   directReplies    Comment[] @relation("replyToComment")
+  userId           Int
+  author           User      @relation(fields: [userId], references: [id])
+  videoId          Int
+  commentedOnVideo Video     @relation(fields: [videoId], references: [id])
   commentedAt      DateTime  @default(now())
   editedAt         DateTime  @updatedAt
+  Rating           Rating[]
+}
+
+enum RatingStatus {
+  LIKED
+  DISLIKED
+}
+
+model Rating {
+  id        Int          @id @default(autoincrement())
+  status    RatingStatus
+  userId    Int
+  ratedBy   User         @relation(fields: [userId], references: [id])
+  videoId   Int?
+  video     Video?       @relation(fields: [videoId], references: [id])
+  commentId Int?
+  comment   Comment?     @relation(fields: [commentId], references: [id])
 }
