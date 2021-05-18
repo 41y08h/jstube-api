@@ -8,41 +8,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id       Int        @id @default(autoincrement())
-  name     String     @db.VarChar(255)
-  email    String     @unique @db.VarChar(255)
-  picture  String?
-  provider String     @db.VarChar(20)
-  pid      String     @db.VarChar(100)
-  comments comments[]
-  videos   videos[]
+model User {
+  id                Int       @id @default(autoincrement())
+  name              String    @db.VarChar(255)
+  email             String    @unique @db.VarChar(255)
+  picture           String?
+  provider          String    @db.VarChar(20)
+  providerAccountId String    @db.VarChar(100)
+  comments          Comment[]
+  videos            Video[]
+  createdAt         DateTime  @default(now())
 }
 
-model videos {
+model Video {
+  id          Int       @id @default(autoincrement())
   title       String
   description String
   src         String
   thumbnail   String
   duration    Int
-  userId      Int?
-  id          Int        @id @default(autoincrement())
-  views       Int?       @default(0)
-  channel     users?     @relation(fields: [userId], references: [id])
-  comments    comments[]
+  userId      Int
+  views       Int?      @default(0)
+  channel     User?     @relation(fields: [userId], references: [id])
+  comments    Comment[]
+  uploadedAt  DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
-model comments {
-  id               Int        @id @default(autoincrement())
-  text             String
+model Comment {
+  id               Int       @id @default(autoincrement())
+  text             String    @db.VarChar(1000)
   videoId          Int
   userId           Int
   replyToCommentId Int?
   baseCommentId    Int?
-  baseComment      comments?  @relation("baseComment", fields: [baseCommentId], references: [id])
-  replyToComment   comments?  @relation("replyToComment", fields: [replyToCommentId], references: [id])
-  author           users      @relation(fields: [userId], references: [id])
-  videos           videos     @relation(fields: [videoId], references: [id])
-  replies          comments[] @relation("baseComment")
-  directReplies    comments[] @relation("replyToComment")
+  baseComment      Comment?  @relation("baseComment", fields: [baseCommentId], references: [id])
+  replyToComment   Comment?  @relation("replyToComment", fields: [replyToCommentId], references: [id])
+  author           User      @relation(fields: [userId], references: [id])
+  commentedOnVideo Video     @relation(fields: [videoId], references: [id])
+  replies          Comment[] @relation("baseComment")
+  directReplies    Comment[] @relation("replyToComment")
 }
