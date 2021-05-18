@@ -5,7 +5,7 @@ import getAllReplies from "./getAllReplies";
 import remove from "./remove";
 import reply from "./reply";
 
-const CommentController = {
+const CommentsController = {
   comment,
   remove,
   getAll,
@@ -14,4 +14,4 @@ const CommentController = {
   getAllReplies,
 };
 
-export default CommentController;
+export default CommentsController;

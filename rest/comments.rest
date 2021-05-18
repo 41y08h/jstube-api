@@ -5,9 +5,9 @@
 
 
 // -> Comment
-GET {{api}}/comment/{{videoId}}
+GET {{api}}/comments/{{videoId}}
 ###
-POST {{api}}/comment/{{videoId}}
+POST {{api}}/comments/{{videoId}}
 Cookie: token={{token}}
 Content-Type: application/json
 
@@ -15,7 +15,7 @@ Content-Type: application/json
     "text": "Hey this is a nicer comment"
 }
 ###
-PATCH  {{api}}/comment/{{commentId}}
+PATCH  {{api}}/comments/{{commentId}}
 Cookie: token={{token}}
 Content-Type: application/json
 
@@ -23,14 +23,14 @@ Content-Type: application/json
     "text": "Hey this is a nicer comment which has been edited 2nd time"
 }
 ###
-DELETE  {{api}}/comment/5
+DELETE  {{api}}/comments/5
 Cookie: token={{token}}
 ###
 
 # -> Comment: Reply
-GET {{api}}/comment/reply/{{commentId}}
+GET {{api}}/comments/replies/{{commentId}}
 ###
-POST  {{api}}/comment/reply/{{commentId}}
+POST  {{api}}/comments/replies/{{commentId}}
 Cookie: token={{token}}
 Content-Type: application/json
 

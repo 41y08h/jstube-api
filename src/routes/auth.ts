@@ -9,9 +9,7 @@ auth.get("/user", authenticate, AuthController.getUser);
 
 auth.get(
   ["/google", "/google/callback"],
-  passport.authenticate("google", {
-    session: false,
-  }),
+  passport.authenticate("google", { session: false }),
   AuthController.completeOAuth
 );
 
