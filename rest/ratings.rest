@@ -1,17 +1,17 @@
 @api = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiJ9.NjA5ZGNmYTAwNzRhYjIxNmM4OWQ0YTY5.6BhYzzUTXry_3WHE2vVRwihQBXkqrSEnQdsi7zyYZ4g
-@videoId = 609ea0a48d22892130792200
+@token = eyJhbGciOiJIUzI1NiJ9.MQ.48rVlWZkUklvo69kDnVzudXUaFjVH1IVU7asr0ia7hI
+@videoId = 1
 @commentId = 609ea7aba7107514dcdf5f14
 
 
 // -> Rating: Video
-GET {{api}}/rating/{{videoId}}?type=VIDEO
+GET {{api}}/ratings/videos/{{videoId}}
 Cookie: token={{token}}
 ###
-POST {{api}}/rating/{{videoId}}/like?type=VIDEO
+POST {{api}}/ratings/videos/{{videoId}}/like
 Cookie: token={{token}}
 ###
-POST {{api}}/rating/{{videoId}}/dislike?type=VIDEO
+POST {{api}}/ratings/videos/{{videoId}}/dislike
 Cookie: token={{token}}
 ###
 DELETE {{api}}/rating/{{videoId}}?type=VIDEO
