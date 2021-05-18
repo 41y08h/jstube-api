@@ -1,4 +1,4 @@
-import { User } from ".prisma/client";
+import prisma from ".prisma/client";
 
 declare global {
   namespace NodeJS {
@@ -18,7 +18,7 @@ declare global {
       clientError(message: string, code?: number): Error;
     }
     interface Request {
-      currentUser?: User;
+      currentUser?: prisma.User;
     }
   }
 }

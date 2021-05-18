@@ -52,4 +52,6 @@ model Comment {
   commentedOnVideo Video     @relation(fields: [videoId], references: [id])
   replies          Comment[] @relation("baseComment")
   directReplies    Comment[] @relation("replyToComment")
+  commentedAt      DateTime  @default(now())
+  editedAt         DateTime  @updatedAt
 }

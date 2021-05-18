@@ -5,7 +5,7 @@ export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.videoId);
 
   const prisma = new PrismaClient();
-  const comments = await prisma.comments.findMany({
+  const comments = await prisma.comment.findMany({
     where: {
       videoId,
       replyToCommentId: null,

@@ -8,11 +8,11 @@ export default asyncHandler(async (req, res) => {
   if (!req.body.text) throw res.clientError("Text is a required field.");
 
   const prisma = new PrismaClient();
-  const comment = await prisma.comments.create({
+  const comment = await prisma.comment.create({
     data: {
       text: req.body.text,
-      user_id: userId,
-      video_id: videoId,
+      userId,
+      videoId,
     },
   });
   res.json(comment);

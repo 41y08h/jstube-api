@@ -1,7 +1,7 @@
 @api = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiJ9.NQ.7lWaaY_hpcvuiQWjQJCyXxi5V9sSKqQE5KYFsG7TRaY
+@token = eyJhbGciOiJIUzI1NiJ9.MQ.48rVlWZkUklvo69kDnVzudXUaFjVH1IVU7asr0ia7hI
 @videoId = 1
-@commentId = 4
+@commentId = 7
 
 
 // -> Comment
@@ -20,7 +20,7 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Hey this is a nicer comment which is edited 2nd time"
+    "text": "Hey this is a nicer comment which has been edited 2nd time"
 }
 ###
 DELETE  {{api}}/comment/3
