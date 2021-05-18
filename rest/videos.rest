@@ -1,8 +1,8 @@
 @api = http://localhost:5000
-@videoId = 609ea0a48d22892130792200
+@videoId = 1
 
 GET {{api}}/videos
 ###
-GET {{api}}/videos/1
+GET {{api}}/videos/{{videoId}}
 ###
 // POST {{api}}/videos 

@@ -1,6 +1,7 @@
 import asyncHandler from "../../lib/asyncHandler";
 import VideosService from "../../services/videos";
 import { UploadedFile } from "express-fileupload";
+import { User } from ".prisma/client";
 
 export default asyncHandler(async (req, res) => {
   if (!req.files) throw res.clientError("No file was found");
@@ -15,10 +16,12 @@ export default asyncHandler(async (req, res) => {
   if (!req.body.title) throw res.clientError("Title is required");
   if (!req.body.description) throw res.clientError("Description is required");
 
+  const currentUser = req.currentUser as User;
+
   const video = await VideosService.upload({
     file,
     body: req.body,
-    userId: req.currentUser?.id as number,
+    userId: currentUser.id,
   });
 
   res.json(video);

@@ -1,12 +1,11 @@
 import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
-import Video from "../../models/Video";
 
 export default asyncHandler(async (req, res) => {
   const prisma = new PrismaClient();
-  const videos = await prisma.videos.findMany({
+  const videos = await prisma.video.findMany({
     include: {
-      user: {
+      channel: {
         select: {
           id: true,
           name: true,

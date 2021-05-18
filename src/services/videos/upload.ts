@@ -6,10 +6,10 @@ import getVideoMetaData from "./getVideoMetaData";
 import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
 import uploadToCloud from "../../lib/uploadToCloud";
-import { videos } from ".prisma/client";
+import { Video } from ".prisma/client";
 import { PrismaClient } from ".prisma/client";
 
-export default async function uplaoad({
+export default async function upload({
   file,
   body,
   userId,
@@ -20,7 +20,7 @@ export default async function uplaoad({
     description: string;
   };
   userId: number;
-}): Promise<videos> {
+}): Promise<Video> {
   const fileId = uuid();
   const videoFilename = `${fileId}.mp4`;
   const thumbnailFilename = `${fileId}.png`;
@@ -48,14 +48,14 @@ export default async function uplaoad({
 
   const prisma = new PrismaClient();
 
-  const video = await prisma.videos.create({
+  const video = await prisma.video.create({
     data: {
       title,
       description,
       src: videoURL,
       thumbnail: thumbnailURL,
       duration: parseInt(metadata.duration as string),
-      user_id: userId,
+      userId,
     },
   });
 

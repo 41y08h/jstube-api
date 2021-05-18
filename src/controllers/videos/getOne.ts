@@ -4,10 +4,16 @@ import asyncHandler from "../../lib/asyncHandler";
 export default asyncHandler(async (req, res) => {
   const prisma = new PrismaClient();
   const videoId = req.params.id;
-  const video = await prisma.videos.findFirst({
+  const video = await prisma.video.findUnique({
     where: { id: parseInt(videoId) },
     include: {
-      user: { select: { id: true, name: true, picture: true } },
+      channel: {
+        select: {
+          id: true,
+          name: true,
+          picture: true,
+        },
+      },
     },
   });
   if (video) return res.json(video);
