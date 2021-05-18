@@ -23,7 +23,7 @@ Content-Type: application/json
     "text": "Hey this is a nicer comment which has been edited 2nd time"
 }
 ###
-DELETE  {{api}}/comment/3
+DELETE  {{api}}/comment/5
 Cookie: token={{token}}
 ###
 

@@ -6,8 +6,8 @@ export default asyncHandler(async (req, res) => {
   const userId = req.currentUser?.id as number;
 
   const prisma = new PrismaClient();
-  const status = await prisma.comments.deleteMany({
-    where: { id: commentId, user_id: userId },
+  const status = await prisma.comment.deleteMany({
+    where: { id: commentId, userId },
   });
 
   if (status.count) return res.sendStatus(200);
