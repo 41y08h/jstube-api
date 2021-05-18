@@ -19,23 +19,23 @@ export default new GoogleStrategy(
   async (accessToken, refreshToken, profile, done) => {
     const prisma = new PrismaClient();
 
-    const existingUser = await prisma.users.findFirst({
+    const existingUser = await prisma.user.findFirst({
       where: {
         provider: "GOOGLE",
-        pid: profile.id,
+        providerAccountId: profile.id,
       },
     });
 
     // null ~ no error
     if (existingUser) return done(null, existingUser);
 
-    const newUser = await prisma.users.create({
+    const newUser = await prisma.user.create({
       data: {
         name: profile._json.name,
         email: profile._json.email,
         picture: profile._json.picture,
         provider: "GOOGLE",
-        pid: profile.id,
+        providerAccountId: profile.id,
       },
     });
 

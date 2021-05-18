@@ -8,12 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Provider {
+  GOOGLE
+}
+
 model User {
   id                Int       @id @default(autoincrement())
   name              String    @db.VarChar(255)
   email             String    @unique @db.VarChar(255)
   picture           String?
-  provider          String    @db.VarChar(20)
+  provider          Provider
   providerAccountId String    @db.VarChar(100)
   comments          Comment[]
   videos            Video[]
