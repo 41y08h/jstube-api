@@ -8,7 +8,7 @@ export default asyncHandler(async (req, res) => {
     throw res.clientError("Type must be COMMENT or VIDEO.");
 
   const { itemId } = req.params;
-  const userId = req.currentUser?.id as string;
+  const userId = req.currentUser?.id as number;
 
   try {
     await RatingService.like({ itemId, userId, itemType });

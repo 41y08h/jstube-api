@@ -13,50 +13,51 @@ enum Provider {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  name              String    @db.VarChar(255)
-  email             String    @unique @db.VarChar(255)
+  id                Int             @id @default(autoincrement())
+  name              String          @db.VarChar(255)
+  email             String          @unique @db.VarChar(255)
   picture           String?
   provider          Provider
-  providerAccountId String    @db.VarChar(100)
+  providerAccountId String          @db.VarChar(100)
   comments          Comment[]
   videos            Video[]
-  createdAt         DateTime  @default(now())
-  Rating            Rating[]
+  createdAt         DateTime        @default(now())
+  commentRatings    CommentRating[]
+  videoRatings      VideoRating[]
 }
 
 model Video {
-  id          Int       @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   title       String
   description String
   src         String
   thumbnail   String
   duration    Int
   userId      Int
-  views       Int?      @default(0)
-  channel     User?     @relation(fields: [userId], references: [id])
+  views       Int?          @default(0)
+  channel     User?         @relation(fields: [userId], references: [id])
   comments    Comment[]
-  uploadedAt  DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  ratings     Rating[]
+  uploadedAt  DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  ratings     VideoRating[]
 }
 
 model Comment {
-  id               Int       @id @default(autoincrement())
-  text             String    @db.VarChar(1000)
+  id               Int             @id @default(autoincrement())
+  text             String          @db.VarChar(1000)
   baseCommentId    Int?
-  baseComment      Comment?  @relation("baseComment", fields: [baseCommentId], references: [id])
-  replies          Comment[] @relation("baseComment")
+  baseComment      Comment?        @relation("baseComment", fields: [baseCommentId], references: [id])
+  replies          Comment[]       @relation("baseComment")
   replyToCommentId Int?
-  replyToComment   Comment?  @relation("replyToComment", fields: [replyToCommentId], references: [id])
-  directReplies    Comment[] @relation("replyToComment")
+  replyToComment   Comment?        @relation("replyToComment", fields: [replyToCommentId], references: [id])
+  directReplies    Comment[]       @relation("replyToComment")
   userId           Int
-  author           User      @relation(fields: [userId], references: [id])
+  author           User            @relation(fields: [userId], references: [id])
   videoId          Int
-  commentedOnVideo Video     @relation(fields: [videoId], references: [id])
-  commentedAt      DateTime  @default(now())
-  editedAt         DateTime  @updatedAt
-  Rating           Rating[]
+  commentedOnVideo Video           @relation(fields: [videoId], references: [id])
+  commentedAt      DateTime        @default(now())
+  editedAt         DateTime        @updatedAt
+  Rating           CommentRating[]
 }
 
 enum RatingStatus {
@@ -64,13 +65,24 @@ enum RatingStatus {
   DISLIKED
 }
 
-model Rating {
+model VideoRating {
+  id      Int          @id @default(autoincrement())
+  status  RatingStatus
+  userId  Int
+  ratedBy User         @relation(fields: [userId], references: [id])
+  videoId Int?
+  video   Video?       @relation(fields: [videoId], references: [id])
+
+  @@unique([videoId, userId])
+}
+
+model CommentRating {
   id        Int          @id @default(autoincrement())
   status    RatingStatus
   userId    Int
   ratedBy   User         @relation(fields: [userId], references: [id])
-  videoId   Int?
-  video     Video?       @relation(fields: [videoId], references: [id])
   commentId Int?
   comment   Comment?     @relation(fields: [commentId], references: [id])
+
+  @@unique([commentId, userId])
 }

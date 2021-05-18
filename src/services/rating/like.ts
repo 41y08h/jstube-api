@@ -8,7 +8,7 @@ export default async function like({
   itemType,
 }: {
   itemId: string;
-  userId: string;
+  userId: number;
   itemType: RatingItemType;
 }): Promise<void> {
   const isVideoRating = itemType === "VIDEO";
