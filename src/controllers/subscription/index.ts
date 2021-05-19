@@ -1,11 +1,11 @@
-import getDetails from "./getDetails";
+import getDetail from "./getDetail";
 import subscribe from "./subscribe";
 import unsubscribe from "./unsubscribe";
 
 const SubscriptionController = {
   subscribe,
   unsubscribe,
-  getDetails,
+  getDetail,
 };
 
 export default SubscriptionController;
