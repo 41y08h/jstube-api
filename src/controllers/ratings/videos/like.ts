@@ -26,7 +26,7 @@ export default asyncHandler(async (req, res) => {
     where: { status: "DISLIKED", videoId },
   });
   const userRating = await prisma.videoRating.findFirst({
-    where: { userId },
+    where: { userId, videoId },
   });
   const userRatingStatus = userRating ? userRating.status : null;
 
