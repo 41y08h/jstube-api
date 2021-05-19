@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import createDebug from "debug";
 import AuthService from "./services/auth";
-import DatabaseService from "./services/database";
 import router from "./routes";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -18,7 +17,6 @@ const app = express();
 const debug = createDebug("app");
 
 AuthService.configure();
-DatabaseService.connect();
 
 const isDevEnv = process.env.NODE_ENV === "development";
 if (isDevEnv) app.use(morgan("dev"));
