@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "main": "src/index.ts",
   "scripts": {
+    "heroku-prebuild": "npx prisma generate",
     "build": "tsc",
     "start": "node ./build/index.js",
     "dev": "nodemon --transpile-only src/index.ts",
