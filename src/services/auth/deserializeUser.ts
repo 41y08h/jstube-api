@@ -1,8 +1,7 @@
-import { PrismaClient } from ".prisma/client";
 import jwt from "jsonwebtoken";
+import prisma from "../../lib/prisma";
 
 export default async function deserializeUser(token: string) {
-  const prisma = new PrismaClient();
   try {
     const userId = jwt.verify(token, process.env.JWT_SECRET);
     if (typeof userId === "string") {

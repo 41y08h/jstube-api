@@ -1,5 +1,5 @@
-import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
+import prisma from "../../lib/prisma";
 
 export default asyncHandler(async (req, res) => {
   const commentId = parseInt(req.params.id);
@@ -8,7 +8,6 @@ export default asyncHandler(async (req, res) => {
   const { text } = req.body;
   if (!text) throw res.clientError("Text field is required.", 422);
 
-  const prisma = new PrismaClient();
   const replyToComment = await prisma.comment.findUnique({
     where: { id: commentId },
   });

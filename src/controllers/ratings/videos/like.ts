@@ -1,11 +1,9 @@
-import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../../lib/asyncHandler";
+import prisma from "../../../lib/prisma";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.id);
   const userId = req.currentUser?.id as number;
-
-  const prisma = new PrismaClient();
 
   const existingRating = await prisma.videoRating.findFirst({
     where: { videoId, userId },

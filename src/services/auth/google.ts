@@ -1,5 +1,5 @@
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 
 declare var process: {
   env: {
@@ -17,8 +17,6 @@ export default new GoogleStrategy(
     proxy: true,
   },
   async (accessToken, refreshToken, profile, done) => {
-    const prisma = new PrismaClient();
-
     const existingUser = await prisma.user.findFirst({
       where: {
         provider: "GOOGLE",

@@ -7,7 +7,7 @@ import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
 import uploadToCloud from "../../lib/uploadToCloud";
 import { Video } from ".prisma/client";
-import { PrismaClient } from ".prisma/client";
+import prisma from "../../lib/prisma";
 
 export default async function upload({
   file,
@@ -45,8 +45,6 @@ export default async function upload({
 
   // Save in database
   const { title, description } = body;
-
-  const prisma = new PrismaClient();
 
   const video = await prisma.video.create({
     data: {
