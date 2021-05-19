@@ -1,5 +1,4 @@
 import { UploadedFile } from "express-fileupload";
-import IVideoUploadBody from "../../interfaces/VideoUploadBody";
 import { v4 as uuid } from "uuid";
 import path from "path";
 import getVideoMetaData from "./getVideoMetaData";
