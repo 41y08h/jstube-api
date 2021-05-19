@@ -14,7 +14,7 @@ Cookie: token={{token}}
 POST {{api}}/ratings/videos/{{videoId}}/dislike
 Cookie: token={{token}}
 ###
-DELETE {{api}}/rating/{{videoId}}?type=VIDEO
+DELETE {{api}}/ratings/videos/{{videoId}}
 Cookie: token={{token}}
 ###
 

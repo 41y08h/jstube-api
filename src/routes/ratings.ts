@@ -4,7 +4,11 @@ import authenticate from "../middlewares/authenticate";
 
 const ratings = Router();
 
-ratings.get("/videos/:id", RatingsController.videos.getDetail);
+ratings
+  .route("/videos/:id")
+  .get(RatingsController.videos.getDetail)
+  .delete(authenticate, RatingsController.videos.removeRating);
+
 ratings.post("/videos/:id/like", authenticate, RatingsController.videos.like);
 ratings.post(
   "/videos/:id/dislike",
