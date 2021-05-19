@@ -24,6 +24,8 @@ model User {
   createdAt         DateTime        @default(now())
   commentRatings    CommentRating[]
   videoRatings      VideoRating[]
+  subscribers       Subscriber[]    @relation("subscriber")
+  subscriptions     Subscriber[]    @relation("channel")
 }
 
 model Video {
@@ -85,4 +87,14 @@ model CommentRating {
   comment   Comment?     @relation(fields: [commentId], references: [id])
 
   @@unique([commentId, userId])
+}
+
+model Subscriber {
+  id        Int  @id @default(autoincrement())
+  channelId Int
+  channel   User @relation("channel", fields: [channelId], references: [id])
+  userId    Int
+  user      User @relation("subscriber", fields: [userId], references: [id])
+
+  @@unique([channelId, userId])
 }
