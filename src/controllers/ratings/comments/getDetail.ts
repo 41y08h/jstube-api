@@ -12,7 +12,7 @@ export default asyncHandler(async (req, res) => {
     where: { status: "DISLIKED", commentId },
   });
   const userRating = await prisma.commentRating.findFirst({
-    where: { userId },
+    where: { userId, commentId },
   });
   const userRatingStatus = userRating ? userRating.status : null;
 
