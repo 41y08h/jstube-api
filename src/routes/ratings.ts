@@ -16,4 +16,20 @@ ratings.post(
   RatingsController.videos.dislike
 );
 
+ratings
+  .route("/comments/:id")
+  .get(RatingsController.comments.getDetail)
+  .delete(authenticate, RatingsController.comments.removeRating);
+
+ratings.post(
+  "/comments/:id/like",
+  authenticate,
+  RatingsController.comments.like
+);
+ratings.post(
+  "/comments/:id/dislike",
+  authenticate,
+  RatingsController.comments.dislike
+);
+
 export default ratings;

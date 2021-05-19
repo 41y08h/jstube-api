@@ -1,13 +1,13 @@
-import dislike from "../comments/dislike";
-import like from "./like";
+import dislike from "./dislike";
 import getDetail from "./getDetail";
+import like from "./like";
 import removeRating from "./removeRating";
 
-const videos = {
+const comments = {
   like,
   dislike,
   getDetail,
   removeRating,
 };
 
-export default videos;
+export default comments;
