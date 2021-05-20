@@ -33,5 +33,5 @@ app.use(router);
 app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
-  debug(`🚀 Started on port ${process.env.PORT}`);
+  debug(`🚀 Ready on port ${process.env.PORT}`);
 });
