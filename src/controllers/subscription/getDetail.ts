@@ -2,7 +2,7 @@ import asyncHandler from "../../lib/asyncHandler";
 import prisma from "../../lib/prisma";
 
 export default asyncHandler(async (req, res) => {
-  const userId = req.currentUser?.id as number;
+  const userId = req.currentUser?.id;
   const channelId = parseInt(req.params.channelId);
 
   const subscribers = await prisma.subscriber.count({ where: { channelId } });
