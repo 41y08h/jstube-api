@@ -37,22 +37,23 @@ export default asyncHandler(async (req, res) => {
     where: { videoId, status: "DISLIKED" },
   });
 
-  const _count = {
-    channel: {
-      subscribers,
-    },
-    rating: {
-      likes,
-      dislikes,
-    },
-  };
-
   const userRating = await prisma.videoRating.findFirst({
     where: { userId, videoId },
   });
   const userRatingStatus = userRating ? userRating.status : null;
 
-  if (video) return res.json({ ...video, _count, userRatingStatus });
+  const rating = { likes, dislikes, userRatingStatus };
+
+  if (video)
+    return res.json({
+      ...video,
+      rating,
+      _count: {
+        channel: {
+          subscribers,
+        },
+      },
+    });
 
   throw res.clientError("Video not found", 404);
 });
