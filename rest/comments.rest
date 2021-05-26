@@ -1,7 +1,7 @@
 @api = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiJ9.MQ.48rVlWZkUklvo69kDnVzudXUaFjVH1IVU7asr0ia7hI
+@token = eyJhbGciOiJIUzI1NiJ9.MQ.fGaUARI99DDadCuNm4ZUhaB6Bpx8KiJsnCLTisJ0bp4
 @videoId = 1
-@commentId = 7
+@commentId = 1
 
 
 // -> Comment

@@ -27,25 +27,31 @@ export default asyncHandler(async (req, res) => {
   }
 
   const data = await prisma.$queryRaw<T>`
-select
-       "Video".*,
-       json_build_object('id', "User".id,
-           'name', "User".name,
-           'picture', "User".picture,
-           'subscribers', json_build_object('count', count("Subscriber"), 'isUserSubscribed', "Subscriber"."userId" = 1 )) as channel,
-       json_build_object(
-           'count', json_build_object('likes', count("likesRating"), 'dislikes', count("dislikesRating")),
-           'userRatingStatus', (case when ${userId} = "likesRating"."userId" then 'LIKED'
-                                     when ${userId} = "dislikesRating"."userId" then 'DISLIKED'
-                                     else null end)) as ratings
+  select "Video".title,
+  json_build_object(
+      'count', json_build_object(
+          'likes', count("likesRating"),
+          'dislikes', count("dislikesRating")
+      ),
+      'userRatingStatus', (case
+       when ${userId} = "likesRating"."userId" then 'LIKED'
+       when ${userId} = "dislikesRating"."userId" then 'DISLIKED'
+       else null end)
+  ) as ratings,
+  array_agg("Comment") as comments
 from "Video"
-
-left join "User" on "User".id = "Video"."userId"
-left join "Subscriber" on "Video"."userId" = "Subscriber"."channelId"
-left join "VideoRating" "likesRating" on "Video".id = "likesRating"."videoId" and "likesRating".status = 'LIKED'
-left join "VideoRating" "dislikesRating" on "Video".id = "dislikesRating"."videoId" and "dislikesRating".status = 'DISLIKED'
+left join "VideoRating" as "likesRating"
+on "Video".id = "likesRating"."videoId" and
+  "likesRating".status = 'LIKED'
+left join "VideoRating" as "dislikesRating"
+on "Video".id = "dislikesRating"."videoId" and
+  "dislikesRating".status = 'DISLIKED'
+left join "Comment"
+on "Video".id = "Comment"."videoId"
 where "Video".id = ${videoId}
-group by "Video".id, "User".id, "Subscriber".id, "likesRating"."userId", "dislikesRating"."userId"
+group by "Video".id,
+    "likesRating".id,
+    "dislikesRating".id
 `;
 
   return res.json(data[0]);

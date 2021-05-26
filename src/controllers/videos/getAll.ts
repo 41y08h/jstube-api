@@ -1,17 +1,17 @@
 import asyncHandler from "../../lib/asyncHandler";
-import prisma from "../../lib/prisma";
+import db from "../../lib/db";
 
 export default asyncHandler(async (req, res) => {
-  const videos = await prisma.video.findMany({
-    include: {
-      channel: {
-        select: {
-          id: true,
-          name: true,
-          picture: true,
-        },
-      },
-    },
-  });
+  const { rows: videos } = await db.query(`
+      select "Video".*,
+           json_build_object(
+            'id', "Channel".id,
+            'name', "Channel".name,
+            'picture', "Channel".picture
+           ) as channel
+    from "Video"
+    left join "User" as "Channel" on
+      "Channel".id = "Video"."userId"
+  `);
   res.json(videos);
 });
