@@ -1,60 +1,85 @@
-import { User } from ".prisma/client";
-import { Video } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
-import prisma from "../../lib/prisma";
+import db from "../../lib/db";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.id);
   const userId = req.currentUser?.id;
 
-  interface T extends Video {
-    channel: {
-      id: number;
-      name: string;
-      picture: string;
-      subscribers: {
-        count: number;
-        isUserSubscriber: boolean;
-      };
-    };
-    ratings: {
-      count: {
-        likes: number;
-        dislikes: number;
-      };
-      userRatingStatus: "LIKED" | "DISLIKED";
-    };
-  }
-
-  const data = await prisma.$queryRaw<T>`
-  select "Video".title,
-  json_build_object(
-      'count', json_build_object(
-          'likes', count("likesRating"),
-          'dislikes', count("dislikesRating")
-      ),
-      'userRatingStatus', (case
-       when ${userId} = "likesRating"."userId" then 'LIKED'
-       when ${userId} = "dislikesRating"."userId" then 'DISLIKED'
-       else null end)
-  ) as ratings,
-  array_agg("Comment") as comments
-from "Video"
-left join "VideoRating" as "likesRating"
-on "Video".id = "likesRating"."videoId" and
-  "likesRating".status = 'LIKED'
-left join "VideoRating" as "dislikesRating"
-on "Video".id = "dislikesRating"."videoId" and
-  "dislikesRating".status = 'DISLIKED'
-left join "Comment"
-on "Video".id = "Comment"."videoId"
-where "Video".id = ${videoId}
-group by "Video".id,
-    "likesRating".id,
-    "dislikesRating".id
-`;
-
-  return res.json(data[0]);
-
-  throw res.clientError("Video not found", 404);
+  const {
+    rows: [video],
+  } = await db.query(
+    `
+    select  "Video".*,
+            json_build_object(
+              'id', "Channel".id,
+              'name', "Channel".name,
+              'picture', "Channel".picture,
+              'subscribers', json_build_object(
+                'count', count(
+                  (select id from "Subscriber" 
+                    where "channelId" = "Channel".id)),
+                'isUserSubscribed', (
+                  select id from "Subscriber"
+                    where "userId" = $2 and
+                          "channelId" = "Channel".id) is not null
+              )) as channel,
+            json_build_object(
+              'count', json_build_object(
+                'likes', count((select id from "VideoRating"
+                    where "videoId" = "Video".id and
+                          status = 'LIKED')),
+                'dislikes', count((select id from "VideoRating"
+                    where "videoId" = "Video".id and
+                          status = 'DISLIKED'))
+                ),
+            'userRatingStatus', (
+                select status from "VideoRating"
+                  where "userId" = $2 and
+                        "videoId" = "Video".id)
+              ) as ratings,
+              json_build_object(
+                'count', count("Comment".id),
+                'items', (
+                    case when count("Comment") = 0
+                        then cast('[]' as json)
+                        else array_to_json(array_agg(
+                            json_build_object(
+                                'text', "Comment".text,
+                                'author', jsonb_build_object(
+                                    'id', "CommentAuthor".id,
+                                    'name', "CommentAuthor".name,
+                                    'picture', "CommentAuthor".picture
+                                 ),
+                                 'ratings', json_build_object(
+                                     'count', json_build_object(
+                                         'likes', (case when "CommentLikes".count is null then 0 else "CommentLikes".count end),
+                                         'dislikes', (case when "CommentDislikes".count is null then 0 else "CommentDislikes".count end)
+                                     ),
+                                     'userRatingStatus', (
+                                         select status
+                                         from "CommentRating"
+                                         where "userId" = $2 and
+                                               "commentId" = "Comment".id
+                                         )
+                                  )
+                            )))
+                        end)
+             ) as comments
+    from "Video"
+    left join "User" as "Channel" on
+        "Channel".id = "Video"."userId"
+    left join "Comment" on
+        "Comment"."videoId" = "Video".id
+    left join "User" as "CommentAuthor" on
+        "CommentAuthor".id = "Comment"."userId"  
+    left join (select *, count(id) as count from "CommentRating" where status = 'LIKED' group by "CommentRating".id) as "CommentLikes" on
+        "CommentLikes"."commentId" = "Comment".id
+    left join (select *, count(id) as count from "CommentRating" where status = 'DISLIKED' group by "CommentRating".id) as "CommentDislikes" on
+        "CommentDislikes"."commentId" = "Comment".id  
+    where "Video".id = $1
+    group by "Video".id, "Channel".id
+  `,
+    [videoId, userId]
+  );
+  res.json(video);
 });
