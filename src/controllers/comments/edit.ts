@@ -1,6 +1,6 @@
 import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
-import prisma from "../../lib/prisma";
+import db from "../../lib/db";
 
 export default asyncHandler(async (req, res) => {
   const commentId = parseInt(req.params.id);
@@ -10,15 +10,18 @@ export default asyncHandler(async (req, res) => {
 
   if (!text) throw res.clientError("Text field is required.", 422);
 
-  const status = await prisma.comment.updateMany({
-    where: { id: commentId, userId },
-    data: { text },
-  });
+  const {
+    rows: [comment],
+  } = await db.query(
+    `
+    update "Comment"
+    set text = $1
+    where id = $2 and 
+          "userId" = $3
+    returning *
+  `,
+    [text, commentId, userId]
+  );
 
-  if (status.count)
-    return res.json(
-      await prisma.comment.findUnique({ where: { id: commentId } })
-    );
-
-  throw res.clientError("Something went wrong", 422);
+  res.json(comment);
 });
