@@ -6,7 +6,6 @@ const ratings = Router();
 
 ratings
   .route("/videos/:id")
-  .get(RatingsController.videos.getDetail)
   .delete(authenticate, RatingsController.videos.removeRating);
 
 ratings.post("/videos/:id/like", authenticate, RatingsController.videos.like);
@@ -18,7 +17,6 @@ ratings.post(
 
 ratings
   .route("/comments/:id")
-  .get(RatingsController.comments.getDetail)
   .delete(authenticate, RatingsController.comments.removeRating);
 
 ratings.post(

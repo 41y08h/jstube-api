@@ -1,13 +1,10 @@
 @api = http://localhost:5000
 @token = eyJhbGciOiJIUzI1NiJ9.MQ.fGaUARI99DDadCuNm4ZUhaB6Bpx8KiJsnCLTisJ0bp4
 @videoId = 10
-@commentId = 1
+@commentId = 3
 
 
 // -> Rating: Video
-GET {{api}}/ratings/videos/{{videoId}}
-Cookie: token={{token}}
-###
 POST {{api}}/ratings/videos/{{videoId}}/like
 Cookie: token={{token}}
 ###
@@ -19,9 +16,6 @@ Cookie: token={{token}}
 ###
 
 // -> Rating: Comment
-GET {{api}}/ratings/comments/{{commentId}}
-Cookie: token={{token}}
-###
 POST {{api}}/ratings/comments/{{commentId}}/like
 Cookie: token={{token}}
 ###
