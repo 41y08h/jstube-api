@@ -5,7 +5,7 @@
 
 
 // -> Comment
-GET {{api}}/comments/{{videoId}}
+GET {{api}}/comments/{{videoId}}?page=5
 ###
 POST {{api}}/comments/{{videoId}}
 Cookie: token={{token}}
@@ -15,7 +15,7 @@ Content-Type: application/json
     "text": "Hey this is a nicer comment"
 }
 ###
-PATCH  {{api}}/comments/{{commentId}}
+PATCH  {{api}}/comments/43
 Cookie: token={{token}}
 Content-Type: application/json
 
