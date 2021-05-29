@@ -4,6 +4,12 @@ import db from "../../../lib/db";
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.id);
   const userId = req.currentUser?.id;
+
+  const {
+    rows: [videoFound],
+  } = await db.query(`select id from "Video" where id = $1`, [videoId]);
+  if (!videoFound) throw res.clientError("Video not found", 404);
+
   const {
     rows: [ratings],
   } = await db.query(

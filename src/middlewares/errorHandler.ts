@@ -15,7 +15,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
   res.status(code).json({
     code,
-    message: "Something went wrong.",
+    message: code >= 500 ? "Something went wrong." : err.message,
     stack: envNotProduction
       ? isClientError
         ? undefined
