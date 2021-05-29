@@ -5,7 +5,7 @@
 
 
 // -> Comment
-GET {{api}}/comments/{{videoId}}?page=5
+GET {{api}}/comments/{{videoId}}
 ###
 POST {{api}}/comments/{{videoId}}
 Cookie: token={{token}}

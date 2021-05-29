@@ -1,4 +1,5 @@
 import asyncHandler from "../../lib/asyncHandler";
+import db from "../../lib/db";
 import prisma from "../../lib/prisma";
 
 export default asyncHandler(async (req, res) => {
@@ -8,24 +9,49 @@ export default asyncHandler(async (req, res) => {
   const { text } = req.body;
   if (!text) throw res.clientError("Text field is required.", 422);
 
-  const replyToComment = await prisma.comment.findUnique({
-    where: { id: commentId },
-  });
+  interface T {
+    id: number;
+    text: string;
+    userId: number;
+    videoId: number;
+    originalCommentId: number;
+    replyToCommentId: number;
+  }
+
+  const {
+    rows: [replyToComment],
+  } = await db.query<T>(
+    `
+    select * from "Comment" where id = $1
+  `,
+    [commentId]
+  );
+
   if (!replyToComment) throw res.clientError("Comment not found.", 404);
 
   const isReplyingToBase = !Boolean(replyToComment.replyToCommentId);
 
-  const replyComment = await prisma.comment.create({
-    data: {
+  const {
+    rows: [reply],
+  } = await db.query(
+    `
+    insert into "Comment"
+    (text, 
+    "userId", 
+    "videoId", 
+    "replyToCommentId",
+    "originalCommentId")
+    values ($1, $2, $3, $4, $5)
+    returning *
+  `,
+    [
       text,
       userId,
-      videoId: replyToComment.videoId,
-      replyToCommentId: replyToComment.id,
-      baseCommentId: isReplyingToBase
-        ? commentId
-        : replyToComment.baseCommentId,
-    },
-  });
+      replyToComment.videoId,
+      replyToComment.id,
+      isReplyingToBase ? commentId : replyToComment.originalCommentId,
+    ]
+  );
 
-  res.json(replyComment);
+  res.json(reply);
 });
