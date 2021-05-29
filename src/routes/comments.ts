@@ -7,7 +7,7 @@ const comments = Router();
 comments
   .route("/:videoId")
   .get(CommentsController.getAll)
-  .post(CommentsController.comment);
+  .post(authenticate, CommentsController.comment);
 
 comments
   .route("/:id")
