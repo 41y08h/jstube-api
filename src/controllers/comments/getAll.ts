@@ -16,7 +16,7 @@ export default asyncHandler(async (req, res) => {
            to_jsonb(author) as author 
     from "Comment"
     left join "PublicUser" as author on author.id = "userId"
-    where "videoId" = $1
+    where "videoId" = $1 and "replyToCommentId" is null
     order by id
     offset ($2 - 1)* 10
     limit 10
@@ -29,7 +29,7 @@ export default asyncHandler(async (req, res) => {
   } = await db.query(
     `
     select cast(count("Comment") as int) from "Comment" 
-    where "videoId" = $1
+    where "videoId" = $1 and "replyToCommentId" is null
     `,
     [videoId]
   );
