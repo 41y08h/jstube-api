@@ -1,4 +1,3 @@
-import { PrismaClient } from ".prisma/client";
 import asyncHandler from "../../lib/asyncHandler";
 import db from "../../lib/db";
 
@@ -12,6 +11,7 @@ export default asyncHandler(async (req, res) => {
 
   const {
     rows: [comment],
+    rowCount,
   } = await db.query(
     `
     update "Comment"
@@ -22,6 +22,8 @@ export default asyncHandler(async (req, res) => {
   `,
     [text, commentId, userId]
   );
+
+  if (!rowCount) throw res.clientError("There was a problem", 422);
 
   res.json(comment);
 });
