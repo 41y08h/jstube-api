@@ -5,7 +5,8 @@
 
 
 // -> Comment
-GET {{api}}/comments/{{videoId}}
+GET {{api}}/comments/{{videoId}}?page=6
+Cookie: token={{token}}
 ###
 POST {{api}}/comments/{{videoId}}
 Cookie: token={{token}}
@@ -23,7 +24,7 @@ Content-Type: application/json
     "text": "Hey this is a not a nicer comment which has been edited 2nd time"
 }
 ###
-DELETE  {{api}}/comments/5
+DELETE  {{api}}/comments/7
 Cookie: token={{token}}
 ###
 

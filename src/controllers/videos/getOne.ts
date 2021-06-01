@@ -15,20 +15,18 @@ export default asyncHandler(async (req, res) => {
               'name', "Channel".name,
               'picture', "Channel".picture,
               'subscribers', json_build_object(
-                'count', count(
-                  (select id from "Subscriber" 
-                    where "channelId" = "Channel".id)),
+                'count', count("Subscriber"),
                 'isUserSubscribed', (
-                  select id from "Subscriber"
+                  select "channelId" from "Subscriber"
                     where "userId" = $2 and
                           "channelId" = "Channel".id) is not null
               )) as channel,
             json_build_object(
               'count', json_build_object(
-                'likes', count((select id from "VideoRating"
+                'likes', count((select "videoId" from "VideoRating"
                     where "videoId" = "Video".id and
                           status = 'LIKED')),
-                'dislikes', count((select id from "VideoRating"
+                'dislikes', count((select "videoId" from "VideoRating"
                     where "videoId" = "Video".id and
                           status = 'DISLIKED'))
                 ),
@@ -72,10 +70,12 @@ export default asyncHandler(async (req, res) => {
         "Comment"."videoId" = "Video".id
     left join "User" as "CommentAuthor" on
         "CommentAuthor".id = "Comment"."userId"  
-    left join (select *, count(id) as count from "CommentRating" where status = 'LIKED' group by "CommentRating".id) as "CommentLikes" on
+    left join (select *, count("commentId") as count from "CommentRating" where status = 'LIKED' group by "CommentRating".id) as "CommentLikes" on
         "CommentLikes"."commentId" = "Comment".id
-    left join (select *, count(id) as count from "CommentRating" where status = 'DISLIKED' group by "CommentRating".id) as "CommentDislikes" on
+    left join (select *, count("commentId") as count from "CommentRating" where status = 'DISLIKED' group by "CommentRating".id) as "CommentDislikes" on
         "CommentDislikes"."commentId" = "Comment".id  
+    left join "Subscriber" on 
+	"Subscriber"."channelId" = "Channel".id
     where "Video".id = $1
     group by "Video".id, "Channel".id
   `,

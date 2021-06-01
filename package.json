@@ -6,7 +6,7 @@
     "heroku-prebuild": "npx prisma generate",
     "build": "tsc",
     "start": "node ./build/index.js",
-    "dev": "nodemon --transpile-only src/index.ts",
+    "dev": "tsnd --respawn --transpile-only src/index.ts",
     "seed": "npx ts-node src/seeder"
   },
   "author": "Piyush",
@@ -32,6 +32,7 @@
     "prisma": "^2.22.1",
     "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.6",
     "tsconfig-paths": "^3.9.0",
     "tslint": "^6.1.3",
     "typescript": "^4.2.4"

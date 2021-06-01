@@ -3,25 +3,43 @@ import db from "../../lib/db";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.videoId);
+  const userId = req.currentUser?.id;
   const page = parseInt(req.query.page as string) || 1;
 
   const { rows: comments } = await db.query(
     `
     select "Comment".id, 
+           "Comment"."userId",
            text,
-           "userId",
            "videoId",
            "createdAt",
            "updatedAt",
-           to_jsonb(author) as author 
+           to_jsonb(author) as author,
+           json_build_object(
+             'count', json_build_object(
+                 'likes', count("CommentLikes"),
+                 'dislikes', count("CommentDislikes")
+             ),
+             'userRatingStatus', (
+                 select status
+                 from "CommentRating"
+                 where "CommentRating"."userId" = $2 and
+                       "commentId" = "Comment".id
+             )
+           ) as ratings
     from "Comment"
     left join "PublicUser" as author on author.id = "userId"
+    left join (select *, count(id) as count from "CommentRating" where status = 'LIKED' group by "CommentRating".id) as "CommentLikes" on
+    "CommentLikes"."commentId" = "Comment".id
+    left join (select *, count(id) as count from "CommentRating" where status = 'DISLIKED' group by "CommentRating".id) as "CommentDislikes" on
+    "CommentDislikes"."commentId" = "Comment".id
     where "videoId" = $1 and "replyToCommentId" is null
+    group by "Comment".id, "Comment".text, author.*
     order by id
-    offset ($2 - 1)* 10
+    offset ($3 - 1)* 10
     limit 10
   `,
-    [videoId, page]
+    [videoId, userId, page]
   );
 
   const {
@@ -36,9 +54,9 @@ export default asyncHandler(async (req, res) => {
 
   res.json({
     total,
-    current: comments.length,
+    count: comments.length,
     page,
     hasMore: page * 10 < total,
-    comments,
+    items: comments,
   });
 });
