@@ -34,7 +34,7 @@ async function main() {
   app.use(errorHandler);
 
   app.listen(process.env.PORT, () => {
-    debug(`🚀 Ready on port ${process.env.PORT}`);
+    debug(`ready on port ${process.env.PORT}`);
   });
 }
 
