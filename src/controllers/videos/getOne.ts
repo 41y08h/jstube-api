@@ -13,7 +13,7 @@ export default asyncHandler(async (req, res) => {
         json_build_object(
             'id', channel.id,
             'name', channel.name,
-            'email', channel.name,
+            'email', channel.email,
             'subscribers', json_build_object(
                 'count', count(distinct "Subscriber"),
                 'isUserSubscribed', (
