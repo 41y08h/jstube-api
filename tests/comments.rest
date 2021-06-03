@@ -16,7 +16,7 @@ Content-Type: application/json
     "text": "2033"
 }
 ###
-PATCH  {{api}}/comments/103
+PATCH  {{api}}/comments/102
 Cookie: token={{token}}
 Content-Type: application/json
 
