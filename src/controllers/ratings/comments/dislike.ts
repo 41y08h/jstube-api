@@ -37,16 +37,25 @@ export default asyncHandler(async (req, res) => {
   } = await db.query(
     `
     select json_build_object(
-      'likes', count((select id from "CommentRating"
-                      where "commentId" = $1 and status = 'LIKED')),
-      'dislikes', count((select id from "CommentRating"
-                      where "commentId" = $1 and status = 'DISLIKED'))
-      ) as count,
-      (select status from "CommentRating"
-      where "commentId" = $1 and
-            "userId" = $2
-      ) as "userRatingStatus"
-  `,
+      'count', json_build_object(
+          'likes', count(distinct "cLikes"),
+          'dislikes', count(distinct "cDislikes")
+          ),
+      'userRatingStatus', (
+              select status
+              from "CommentRating"
+              where "commentId" = $1
+                and "userId" = $2
+      )
+      ) as ratings
+    from "CommentRating"
+    left join "CommentRating" "cLikes" on
+      "cLikes"."commentId" = $1 and
+      "cLikes".status = 'LIKED'
+    left join "CommentRating" "cDislikes" on
+      "cDislikes"."commentId" = $1 and
+      "cDislikes".status = 'DISLIKED'
+    `,
     [commentId, userId]
   );
 
