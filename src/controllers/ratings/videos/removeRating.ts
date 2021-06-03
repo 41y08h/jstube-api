@@ -1,6 +1,5 @@
 import asyncHandler from "../../../lib/asyncHandler";
 import db from "../../../lib/db";
-import prisma from "../../../lib/prisma";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.id);
@@ -22,15 +21,24 @@ export default asyncHandler(async (req, res) => {
   } = await db.query(
     `
     select json_build_object(
-      'likes', count((select id from "VideoRating"
-                      where "videoId" = $1 and status = 'LIKED')),
-      'dislikes', count((select id from "VideoRating"
-                      where "videoId" = $1 and status = 'DISLIKED'))
-      ) as count,
-      (select status from "VideoRating"
-      where "videoId" = $1 and
-            "userId" = $2
-      ) as "userRatingStatus"
+      'count', json_build_object(
+          'likes', count(distinct "vLikes"),
+          'dislikes', count(distinct "vDislikes")
+          ),
+      'userRatingStatus', (
+              select status
+              from "VideoRating"
+              where "videoId" = $1
+                and "userId" = $2
+      )
+      ) as ratings
+    from "VideoRating"
+    left join "VideoRating" "vLikes" on
+      "vLikes"."videoId" = $1 and
+      "vLikes".status = 'LIKED'
+    left join "VideoRating" "vDislikes" on
+      "vDislikes"."videoId" = $1 and
+      "vDislikes".status = 'DISLIKED'
   `,
     [videoId, userId]
   );
