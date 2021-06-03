@@ -1,4 +1,4 @@
-import prisma from ".prisma/client";
+import IUser from "../interfaces/IUser";
 
 declare global {
   namespace NodeJS {
@@ -17,7 +17,20 @@ declare global {
       clientError(message: string, code?: number): Error;
     }
     interface Request {
-      currentUser?: prisma.User;
+      currentUser?: IUser;
+    }
+  }
+  namespace passport {
+    interface Profile {
+      _json: {
+        sub: string;
+        name: string;
+        given_name: string;
+        picture: string;
+        email: string;
+        email_verified: boolean;
+        locale: string;
+      };
     }
   }
 }

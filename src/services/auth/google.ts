@@ -1,12 +1,5 @@
-import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import prisma from "../../lib/prisma";
-
-declare var process: {
-  env: {
-    GOOGLE_CLIENT_ID: string;
-    GOOGLE_CLIENT_SECRET: string;
-  };
-};
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import db from "../../lib/db";
 
 export default new GoogleStrategy(
   {
@@ -17,25 +10,30 @@ export default new GoogleStrategy(
     proxy: true,
   },
   async (accessToken, refreshToken, profile, done) => {
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        provider: "GOOGLE",
-        providerAccountId: profile.id,
-      },
-    });
+    const { sub: gid, name, email, picture } = profile._json;
+
+    const {
+      rows: [existingUser],
+    } = await db.query(
+      `
+      select * from "User"
+      where gid = $1
+      `,
+      [gid]
+    );
 
     // null ~ no error
     if (existingUser) return done(null, existingUser);
 
-    const newUser = await prisma.user.create({
-      data: {
-        name: profile._json.name,
-        email: profile._json.email,
-        picture: profile._json.picture,
-        provider: "GOOGLE",
-        providerAccountId: profile.id,
-      },
-    });
+    const {
+      rows: [newUser],
+    } = await db.query(
+      `
+      insert into "User"(name, email, picture, gid)
+      values ($1, $2, $3, $4) returning *
+      `,
+      [name, email, picture, gid]
+    );
 
     done(null, newUser);
   }
