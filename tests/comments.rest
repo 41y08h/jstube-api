@@ -16,15 +16,15 @@ Content-Type: application/json
     "text": "2033"
 }
 ###
-PATCH  {{api}}/comments/102
+PATCH  {{api}}/comments/125
 Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Hey this is a not"
+    "text": "Hey this is a nt"
 }
 ###
-DELETE  {{api}}/comments/103
+DELETE  {{api}}/comments/102
 Cookie: token={{token}}
 ###
 
