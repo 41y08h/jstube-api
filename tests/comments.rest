@@ -13,10 +13,10 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "Hey this is a nicer comment"
+    "text": "2033"
 }
 ###
-PATCH  {{api}}/comments/43
+PATCH  {{api}}/comments/102
 Cookie: token={{token}}
 Content-Type: application/json
 
@@ -24,7 +24,7 @@ Content-Type: application/json
     "text": "Hey this is a not a nicer comment which has been edited 2nd time"
 }
 ###
-DELETE  {{api}}/comments/7
+DELETE  {{api}}/comments/8
 Cookie: token={{token}}
 ###
 

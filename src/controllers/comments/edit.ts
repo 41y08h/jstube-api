@@ -14,11 +14,17 @@ export default asyncHandler(async (req, res) => {
     rowCount,
   } = await db.query(
     `
-    update "Comment"
-    set text = $1
-    where id = $2 and 
-          "userId" = $3
-    returning *
+    with updated as (
+      update "Comment"
+      set text = $1
+      where id = $2 and "userId" = $3
+      returning *
+    )
+    select updated.*, 
+           to_json(author) as author 
+    from updated
+    left join "PublicUser" author on
+      author.id = updated."userId";
   `,
     [text, commentId, userId]
   );
