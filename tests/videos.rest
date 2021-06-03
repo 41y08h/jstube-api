@@ -1,9 +1,12 @@
 @api = http://localhost:5000
 @videoId = 1
+@token = eyJhbGciOiJIUzI1NiJ9.MQ.fGaUARI99DDadCuNm4ZUhaB6Bpx8KiJsnCLTisJ0bp4
+
 
 GET {{api}}/videos
 ###
 GET {{api}}/videos/{{videoId}}
+Cookie: token={{token}}
 ###
 // POST {{api}}/videos 
  
