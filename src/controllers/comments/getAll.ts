@@ -8,35 +8,34 @@ export default asyncHandler(async (req, res) => {
 
   const { rows: comments } = await db.query(
     `
-    select "Comment".id, 
-           "Comment"."userId",
-           text,
-           "videoId",
-           "createdAt",
-           "updatedAt",
-           to_jsonb(author) as author,
-           json_build_object(
-             'count', json_build_object(
-                 'likes', count("CommentLikes"),
-                 'dislikes', count("CommentDislikes")
-             ),
-             'userRatingStatus', (
-                 select status
-                 from "CommentRating"
-                 where "CommentRating"."userId" = $2 and
-                       "commentId" = "Comment".id
-             )
-           ) as ratings
+    select "Comment".*,
+        to_json(author) as author,
+        json_build_object(
+                'count', json_build_object(
+                'likes', count(distinct "cLikes"),
+                'dislikes', count(distinct "cDislikes")
+            ),
+                'userRatingStatus', (
+                    select status
+                    from "CommentRating"
+                    where "commentId" = "Comment".id
+                      and "userId" = $2
+                )
+            )           as ratings
     from "Comment"
-    left join "PublicUser" as author on author.id = "userId"
-    left join (select *, count(id) as count from "CommentRating" where status = 'LIKED' group by "CommentRating".id) as "CommentLikes" on
-    "CommentLikes"."commentId" = "Comment".id
-    left join (select *, count(id) as count from "CommentRating" where status = 'DISLIKED' group by "CommentRating".id) as "CommentDislikes" on
-    "CommentDislikes"."commentId" = "Comment".id
-    where "videoId" = $1 and "replyToCommentId" is null
-    group by "Comment".id, "Comment".text, author.*
+    left join "PublicUser" author on
+      author.id = "Comment"."userId"
+    left join "CommentRating" "cLikes" on
+      "cLikes"."commentId" = "Comment".id and
+      "cLikes".status = 'LIKED'
+    left join "CommentRating" "cDislikes" on
+      "cDislikes"."commentId" = "Comment".id and
+      "cDislikes".status = 'DISLIKED'
+    where "replyToCommentId" is null and 
+          "videoId" = $1
+    group by "Comment".id, author.*
     order by id
-    offset ($3 - 1)* 10
+    offset ($3 - 1) * 10
     limit 10
   `,
     [videoId, userId, page]
