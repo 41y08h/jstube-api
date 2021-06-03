@@ -29,7 +29,7 @@ Cookie: token={{token}}
 ###
 
 # -> Comment: Reply
-GET {{api}}/comments/replies/{{commentId}}
+GET {{api}}/comments/replies/{{commentId}}?page=2
 ###
 POST  {{api}}/comments/replies/{{commentId}}
 Cookie: token={{token}}
