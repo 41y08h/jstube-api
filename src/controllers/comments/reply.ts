@@ -31,45 +31,11 @@ export default asyncHandler(async (req, res) => {
   const isReplyingToBase = !Boolean(replyToComment.replyToCommentId);
 
   const {
-    rows: [reply],
+    rows: [insertedReply],
   } = await db.query(
     `
-    with inserted as (
-      insert into "Comment"(text, "userId", "videoId", "replyToCommentId", "originalCommentId")
-      values ($1, $2, $3, $4, $5) returning *
-    )
-    select inserted.*,
-          to_json(author) as author,
-          json_build_object(
-          'count', json_build_object(
-            'likes', count(distinct "cLikes"),
-            'dislikes', count(distinct "cDislikes")
-          ),
-          'userRatingStatus', (
-              select status
-              from "CommentRating"
-              where "commentId" = inserted.id and
-                    "userId" = $2
-          )
-      ) as ratings
-    from inserted
-    left join "PublicUser" author on
-        author.id = inserted."userId"
-    left join "CommentRating" "cLikes" on
-        "cLikes"."commentId" = inserted.id and
-        "cLikes".status = 'LIKED'
-    left join "CommentRating" "cDislikes" on
-        "cDislikes"."commentId" = inserted.id and
-        "cDislikes".status = 'DISLIKED'
-    group by inserted.id,
-          inserted.text,
-          inserted."originalCommentId",
-          inserted."replyToCommentId",
-          inserted."userId",
-          inserted."videoId",
-          inserted."createdAt",
-          inserted."updatedAt",
-          author.*
+    insert into "Comment"(text, "userId", "videoId", "replyToCommentId", "originalCommentId")
+    values ($1, $2, $3, $4, $5) returning id, "userId"
     `,
     [
       text,
@@ -78,6 +44,41 @@ export default asyncHandler(async (req, res) => {
       replyToComment.id,
       isReplyingToBase ? commentId : replyToComment.originalCommentId,
     ]
+  );
+
+  const {
+    rows: [reply],
+  } = await db.query(
+    `
+    select id,
+        text,
+        "originalCommentId",
+        "replyToCommentId",
+        "userId",
+        "videoId",
+        "createdAt",
+        "updatedAt",
+        json_build_object(
+        'id', "authorId",
+        'name', "authorName",
+        'picture', "authorPicture"
+        ) as author,
+        json_build_object(
+            'count', json_build_object(
+                'likes', "likesCount",
+                'dislikes', "dislikesCount"
+            ),
+            'userRatingStatus', (
+              select status
+              from "CommentRating"
+              where "commentId" = "JoinedComment".id and
+                    "userId" = $2
+          )
+        ) as ratings,
+        "replyCount"
+    from "JoinedComment" where id = $1
+    `,
+    [insertedReply.id, insertedReply.userId]
   );
 
   res.json(reply);
