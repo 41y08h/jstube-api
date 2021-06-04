@@ -21,17 +21,15 @@ export default asyncHandler(async (req, res) => {
   } = await db.query(
     `
     select json_build_object(
-      'count', json_build_object(
-          'likes', count(distinct "cLikes"),
-          'dislikes', count(distinct "cDislikes")
-          ),
-      'userRatingStatus', (
+         	'likes', count(distinct "cLikes"),
+          	'dislikes', count(distinct "cDislikes")
+          ) as count,
+          (
               select status
               from "CommentRating"
               where "commentId" = $1
                 and "userId" = $2
-      )
-      ) as ratings
+	  ) as "userRatingStatus"
     from "CommentRating"
     left join "CommentRating" "cLikes" on
       "cLikes"."commentId" = $1 and
