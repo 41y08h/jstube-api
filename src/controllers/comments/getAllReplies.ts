@@ -8,31 +8,34 @@ export default asyncHandler(async (req, res) => {
 
   const { rows: replies } = await db.query(
     `
-    select "Comment".*,
-        to_json(author) as author,
-        json_build_object(
-                'count', json_build_object(
-                'likes', count(distinct "cLikes"),
-                'dislikes', count(distinct "cDislikes")
-            ),
-                'userRatingStatus', (
-                    select status
-                    from "CommentRating"
-                    where "commentId" = "Comment".id
-                      and "userId" = $2
-                )
-            )           as ratings
-    from "Comment"
-    left join "PublicUser" author on
-      author.id = "Comment"."userId"
-    left join "CommentRating" "cLikes" on
-      "cLikes"."commentId" = "Comment".id and
-      "cLikes".status = 'LIKED'
-    left join "CommentRating" "cDislikes" on
-      "cDislikes"."commentId" = "Comment".id and
-      "cDislikes".status = 'DISLIKED'
+    select id,
+    text,
+    "originalCommentId",
+    "replyToCommentId",
+    "userId",
+    "videoId",
+    "createdAt",
+    "updatedAt",
+    json_build_object(
+    'id', "authorId",
+    'name', "authorName",
+    'picture', "authorPicture"
+    ) as author,
+    json_build_object(
+        'count', json_build_object(
+            'likes', "likesCount",
+            'dislikes', "dislikesCount"
+        ),
+        'userRatingStatus', (
+          select status
+          from "CommentRating"
+          where "commentId" = "JoinedComment".id and
+                "userId" = $2
+      )
+    ) as ratings,
+    "replyCount"
+    from "JoinedComment"
     where "originalCommentId" = $1
-    group by "Comment".id, author.*
     order by id
     offset ($3 - 1) * 10
     limit 10

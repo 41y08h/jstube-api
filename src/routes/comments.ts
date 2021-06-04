@@ -15,7 +15,7 @@ comments
   .patch(authenticate, CommentsController.edit);
 
 comments
-  .route("/replies/:id")
+  .route("/:id/replies")
   .get(CommentsController.getAllReplies)
   .post(authenticate, CommentsController.reply);
 

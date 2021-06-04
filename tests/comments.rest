@@ -29,9 +29,9 @@ Cookie: token={{token}}
 ###
 
 # -> Comment: Reply
-GET {{api}}/comments/replies/{{commentId}}?page=2
+GET {{api}}/comments/{{commentId}}/replies?page=2
 ###
-POST  {{api}}/comments/replies/{{commentId}}
+POST  {{api}}/comments/2/replies
 Cookie: token={{token}}
 Content-Type: application/json
 
