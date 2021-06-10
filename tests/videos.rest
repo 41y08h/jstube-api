@@ -10,3 +10,12 @@ Cookie: token={{token}}
 ###
 // POST {{api}}/videos 
  
+
+GET {{api}}/watchlater/
+Cookie: token={{token}}
+###
+POST {{api}}/watchlater/1
+Cookie: token={{token}}
+###
+DELETE  {{api}}/watchlater/1
+Cookie: token={{token}}
