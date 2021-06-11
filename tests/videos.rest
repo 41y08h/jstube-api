@@ -19,3 +19,6 @@ Cookie: token={{token}}
 ###
 DELETE  {{api}}/watchlater/1
 Cookie: token={{token}}
+###
+GET {{api}}/playlists/liked
+Cookie: token={{token}}
