@@ -8,6 +8,11 @@ GET {{api}}/videos
 GET {{api}}/videos/{{videoId}}
 Cookie: token={{token}}
 ###
+
+GET {{api}}/videos/mine
+Cookie: token={{token}}
+
+###
 // POST {{api}}/videos 
  
 
