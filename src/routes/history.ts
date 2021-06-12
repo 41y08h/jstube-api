@@ -11,7 +11,8 @@ router.get("/", async (req, res) => {
     select to_json(v) as video, "viewedAt" from "History"
     left join "VideoWithChannel" v on
         v.id = "History"."videoId"
-    where "History"."userId" = $1;
+    where "History"."userId" = $1
+    order by "viewedAt" desc;
     `,
     [userId]
   );
