@@ -13,6 +13,11 @@ GET {{api}}/videos/mine
 Cookie: token={{token}}
 
 ###
+
+GET {{api}}/history
+Cookie: token={{token}}
+
+###
 // POST {{api}}/videos 
  
 
