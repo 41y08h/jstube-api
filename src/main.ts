@@ -22,6 +22,7 @@ async function main() {
   const isDevEnv = process.env.NODE_ENV === "development";
   if (isDevEnv) app.use(morgan("dev"));
 
+  app.enable("trust proxy");
   app.use(cors());
   app.use(express.json());
   app.use(fileUpload());

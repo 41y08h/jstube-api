@@ -51,4 +51,37 @@ export default asyncHandler(async (req, res) => {
     [videoId, userId]
   );
   res.json(video);
+
+  // Record history if authenticated
+
+  // Unauthenticated
+  if (!userId) return;
+
+  const {
+    rows: [foundHistory],
+  } = await db.query<{ videoId: number; userId: number; viewedAt: Date }>(
+    `select * from "History" where "videoId" = $1 and "userId" = $2`,
+    [videoId, userId]
+  );
+
+  if (foundHistory) {
+    // Change timestamp
+    db.query(
+      `
+    update "History"
+    set "viewedAt" = $1
+    where "videoId" = $2 and
+          "userId" = $3    
+    `,
+      [new Date(), videoId, userId]
+    );
+  } else {
+    db.query(
+      `
+      insert into "History"("videoId", "userId")
+      values ($1, $2)
+      `,
+      [videoId, userId]
+    );
+  }
 });
