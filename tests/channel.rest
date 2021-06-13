@@ -3,3 +3,6 @@
 
 GET {{api}}/channel/1
 Cookie: token={{token}}
+###
+
+GET {{api}}/channel/1/videos

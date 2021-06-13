@@ -38,4 +38,13 @@ router.get("/:id", async (req, res) => {
   res.json(channel);
 });
 
+router.get("/:id/videos", async (req, res) => {
+  const userId = parseInt(req.params.id);
+  const query = await db.query(
+    `select * from "VideoWithChannel" where "userId" = $1;`,
+    [userId]
+  );
+  res.json(query.rows);
+});
+
 export default router;
