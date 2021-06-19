@@ -84,4 +84,9 @@ export default asyncHandler(async (req, res) => {
       [videoId, userId]
     );
   }
+
+  // Increase views
+  db.query(`update "Video" set views = "Video".views + 1 where id = $1`, [
+    videoId,
+  ]);
 });
