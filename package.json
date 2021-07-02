@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "node ./build/index.js",
     "dev": "nodemon --transpile-only src/main.ts",
-    "seed": "nodemon src/seeder"
+    "seed": "ts-node src/seeder"
   },
   "author": "Piyush",
   "license": "MIT",
