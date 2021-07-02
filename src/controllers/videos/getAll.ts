@@ -2,6 +2,8 @@ import asyncHandler from "../../lib/asyncHandler";
 import db from "../../lib/db";
 
 export default asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page as string) || 1;
+
   const { rows: videos } = await db.query(
     `
   select "Video".*,
@@ -14,7 +16,19 @@ export default asyncHandler(async (req, res) => {
   left join "User" as "Channel" on
     "Channel".id = "Video"."userId"
   order by "uploadedAt" desc
-  `
+  offset ($1 - 1) * 10
+  limit 10
+  `,
+    [page]
   );
-  res.json(videos);
+
+  const {
+    rows: [{ count: total }],
+  } = await db.query(`select cast(count("Video") as int) from "Video"`);
+
+  res.json({
+    page,
+    hasMore: page * 10 < total,
+    items: videos,
+  });
 });
