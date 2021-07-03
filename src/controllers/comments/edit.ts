@@ -17,7 +17,7 @@ export default asyncHandler(async (req, res) => {
     where id = $2 and "userId" = $3
     returning id, "userId" 
     `,
-    [req.body.text, commentId, userId]
+    [req.body.text.trim(), commentId, userId]
   );
 
   if (!rowCount) throw res.clientError("There was a problem", 422);

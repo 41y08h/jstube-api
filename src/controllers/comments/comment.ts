@@ -15,7 +15,7 @@ export default asyncHandler(async (req, res) => {
     insert into "Comment"(text, "videoId", "userId")
     values ($1, $2, $3) returning id, "userId"   
     `,
-    [req.body.text, videoId, userId]
+    [req.body.text.trim(), videoId, userId]
   );
 
   if (!rowCount) throw res.clientError("There was a problem", 422);

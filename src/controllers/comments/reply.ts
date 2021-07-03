@@ -38,7 +38,7 @@ export default asyncHandler(async (req, res) => {
     values ($1, $2, $3, $4, $5) returning id, "userId"
     `,
     [
-      text,
+      text.trim(),
       userId,
       replyToComment.videoId,
       replyToComment.id,

@@ -13,15 +13,15 @@ Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "2033"
+    "text": "2033  "
 }
 ###
-PATCH  {{api}}/comments/122
+PATCH  {{api}}/comments/288
 Cookie: token={{token}}
 Content-Type: application/json
 
 {
-    "text": "ntnt"
+    "text": "ntnt "
 }
 ###
 DELETE  {{api}}/comments/102
