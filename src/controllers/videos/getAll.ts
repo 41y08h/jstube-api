@@ -3,6 +3,7 @@ import db from "../../lib/db";
 
 export default asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
+  const userId = req.currentUser?.id;
 
   const { rows: videos } = await db.query(
     `
@@ -11,15 +12,19 @@ export default asyncHandler(async (req, res) => {
           'id', "Channel".id,
           'name', "Channel".name,
           'picture', "Channel".picture
-          ) as channel
+          ) as channel,
+          wl is not null as "isInWL"
   from "Video"
   left join "User" as "Channel" on
     "Channel".id = "Video"."userId"
+  left join "WatchLater" as wl on
+    wl."videoId" = "Video".id and
+    wl."userId" = $1
   order by "uploadedAt" desc
-  offset ($1 - 1) * 10
-  limit 10
+  offset ($2 - 1) * 10
+  limit 24
   `,
-    [page]
+    [userId, page]
   );
 
   const {
