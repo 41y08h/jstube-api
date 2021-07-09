@@ -42,7 +42,7 @@ export default asyncHandler(async (req, res) => {
     order by id desc
     limit 10
   `,
-    [videoId, userId, beforeId].filter(Boolean)
+    beforeId ? [videoId, userId, beforeId] : [videoId, userId]
   );
 
   const {

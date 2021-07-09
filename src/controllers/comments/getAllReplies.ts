@@ -4,7 +4,9 @@ import db from "../../lib/db";
 export default asyncHandler(async (req, res) => {
   const commentId = parseInt(req.params.id);
   const userId = req.currentUser?.id;
-  const page = parseInt(req.query.page as string) || 1;
+  const beforeId = req.query.beforeId
+    ? parseInt(req.query.beforeId as string)
+    : undefined;
 
   const { rows: replies } = await db.query(
     `
@@ -35,12 +37,22 @@ export default asyncHandler(async (req, res) => {
     ) as ratings,
     "replyCount"
     from "JoinedComment"
-    where "originalCommentId" = $1
-    order by id
-    offset ($3 - 1) * 10
+    where "originalCommentId" = $1 ${beforeId ? `and id < $3` : ``}
+    order by id desc
     limit 10
   `,
-    [commentId, userId, page]
+    beforeId ? [commentId, userId, beforeId] : [commentId, userId]
+  );
+
+  const {
+    rows: [{ hasMore }],
+  } = await db.query(
+    `
+    select (count("Comment") != 0) as "hasMore" from "Comment"
+    where "originalCommentId" = $1 and
+          id < $2
+    `,
+    [commentId, replies[replies.length - 1]?.id]
   );
 
   const {
@@ -55,9 +67,7 @@ export default asyncHandler(async (req, res) => {
 
   res.json({
     total,
-    count: replies.length,
-    page,
-    hasMore: page * 10 < total,
+    hasMore,
     items: replies,
   });
 });
