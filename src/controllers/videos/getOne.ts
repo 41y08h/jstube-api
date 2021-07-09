@@ -14,6 +14,7 @@ export default asyncHandler(async (req, res) => {
             'id', channel.id,
             'name', channel.name,
             'email', channel.email,
+	          'picture', channel.picture,
             'subscribers', json_build_object(
                 'count', count(distinct "Subscriber"),
                 'isUserSubscribed', (
