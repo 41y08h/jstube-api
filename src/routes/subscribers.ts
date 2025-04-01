@@ -1,7 +1,9 @@
 import { Router } from "express";
 import SubscribersController from "../controllers/subscribers";
-import db from "../lib/db";
+import { subscribersTable, usersTable } from "../db/schema";
 import authenticate from "../middlewares/authenticate";
+import { eq } from "drizzle-orm";
+import db from "../db";
 
 const subscribers = Router();
 
@@ -14,17 +16,20 @@ subscribers
 subscribers.get("/subscriptions", async (req, res) => {
   const userId = req.currentUser?.id;
 
-  const { rows } = await db.query(
-    `
-  select "Subscriber".*, to_json(channel) as channel from "Subscriber"
-  left join "PublicUser" as channel on
-  id = "channelId"
-  where "userId" = $1  
-  `,
-    [userId]
-  );
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
-  res.json(rows);
+  const subscriptions = await db
+    .select({
+      subscriber: subscribersTable,
+      channel: usersTable,
+    })
+    .from(subscribersTable)
+    .leftJoin(usersTable, eq(usersTable.id, subscribersTable.channelId))
+    .where(eq(subscribersTable.userId, userId));
+
+  res.json(subscriptions);
 });
 
 export default subscribers;

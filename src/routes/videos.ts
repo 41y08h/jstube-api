@@ -1,7 +1,9 @@
 import { Router } from "express";
 import VideosController from "../controllers/videos";
-import db from "../lib/db";
 import authenticate from "../middlewares/authenticate";
+import { videosTable, usersTable } from "../db/schema";
+import { eq } from "drizzle-orm";
+import db from "../db";
 
 const videos = Router();
 
@@ -10,19 +12,23 @@ videos
   .get(VideosController.getAll)
   .post(authenticate, VideosController.upload);
 
-videos.get("/mine", async (req, res) => {
+videos.get("/mine", authenticate, async (req, res) => {
   const userId = req.currentUser?.id;
-  const { rows: videos } = await db.query(
-    `
-  select "Video".*, to_json(channel) channel from "Video"
-  left join "PublicUser" channel on 
-    channel.id = "userId"
-  where "userId" = $1
-  `,
-    [userId]
-  );
 
-  res.json(videos);
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const userVideos = await db
+    .select({
+      video: videosTable,
+      channel: usersTable,
+    })
+    .from(videosTable)
+    .leftJoin(usersTable, eq(usersTable.id, videosTable.user_id))
+    .where(eq(videosTable.user_id, userId));
+
+  res.json(userVideos);
 });
 
 videos.get("/:id", VideosController.getOne);

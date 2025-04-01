@@ -5,7 +5,9 @@ import getVideoMetaData from "./getVideoMetaData";
 import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
 import uploadToCloud from "../../lib/uploadToCloud";
-import db from "../../lib/db";
+import { videosTable } from "../../db/schema";
+import db from "../../db";
+import { InferInsertModel } from "drizzle-orm";
 
 export default async function upload({
   file,
@@ -18,7 +20,7 @@ export default async function upload({
     description: string;
   };
   userId: number;
-}): Promise<Video> {
+}): Promise<InferInsertModel<typeof videosTable>> {
   const fileId = uuid();
   const videoFilename = `${fileId}.mp4`;
   const thumbnailFilename = `${fileId}.png`;
@@ -44,21 +46,17 @@ export default async function upload({
   // Save in database
   const { title, description } = body;
 
-  const { rows: videos } = await db.query(
-    `
-  INSERT INTO video (title, description, src, thumbnail, duration, user_id)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING *;
-  `,
-    [
+  const [video] = await db
+    .insert(videosTable)
+    .values({
       title,
       description,
-      videoURL,
-      thumbnailURL,
-      parseInt(metadata.duration as string),
-      userId,
-    ]
-  );
+      src: videoURL,
+      thumbnail: thumbnailURL,
+      duration: parseInt(metadata.duration as string), // Ensure it's an integer
+      user_id: userId,
+    })
+    .returning(); // Returns the inserted row
 
   // Cleanup temp files on disk
   try {
@@ -68,5 +66,5 @@ export default async function upload({
     console.log(err);
   }
 
-  return videos[0];
+  return video;
 }

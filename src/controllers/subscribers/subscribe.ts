@@ -1,30 +1,33 @@
 import asyncHandler from "../../lib/asyncHandler";
-import db from "../../lib/db";
+import { subscribersTable } from "../../db/schema";
+import { and, count, eq, sql } from "drizzle-orm";
+import db from "../../db";
 
 export default asyncHandler(async (req, res) => {
   const channelId = parseInt(req.params.channelId);
-  const userId = req.currentUser?.id as number;
+  const userId = req.currentUser?.id;
 
-  await db.query(
-    `
-    insert into "Subscriber"("channelId", "userId")
-    values ($1, $2)
-  `,
-    [channelId, userId]
-  );
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
-  const {
-    rows: [subscribers],
-  } = await db.query(
-    `
-  select cast(count("Subscriber") as int),
-        (select "channelId" from "Subscriber" where "channelId" = $1 and "userId" = $2) 
-        is not null as "isUserSubscribed"
-  from "Subscriber"
-  where "channelId" = $1
-  `,
-    [channelId, userId]
-  );
+  // Insert subscription
+  await db
+    .insert(subscribersTable)
+    .values({ channelId, userId })
+    .onConflictDoNothing(); // Prevent duplicate subscriptions
 
-  res.json(subscribers);
+  // Get subscription count & check if user is subscribed
+  const [{ total, isUserSubscribed }] = await db
+    .select({
+      total: count(),
+      isUserSubscribed: sql<boolean>`EXISTS (
+        SELECT 1 FROM subscribers
+        WHERE "channelId" = ${channelId} AND "userId" = ${userId}
+      )`.as("isUserSubscribed"),
+    })
+    .from(subscribersTable)
+    .where(eq(subscribersTable.channelId, channelId));
+
+  res.json({ total, isUserSubscribed });
 });
