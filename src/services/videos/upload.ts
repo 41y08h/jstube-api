@@ -5,8 +5,7 @@ import getVideoMetaData from "./getVideoMetaData";
 import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
 import uploadToCloud from "../../lib/uploadToCloud";
-import { Video } from ".prisma/client";
-import prisma from "../../lib/prisma";
+import db from "../../lib/db";
 
 export default async function upload({
   file,
@@ -45,16 +44,21 @@ export default async function upload({
   // Save in database
   const { title, description } = body;
 
-  const video = await prisma.video.create({
-    data: {
+  const { rows: videos } = await db.query(
+    `
+  INSERT INTO video (title, description, src, thumbnail, duration, user_id)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+  `,
+    [
       title,
       description,
-      src: videoURL,
-      thumbnail: thumbnailURL,
-      duration: parseInt(metadata.duration as string),
+      videoURL,
+      thumbnailURL,
+      parseInt(metadata.duration as string),
       userId,
-    },
-  });
+    ]
+  );
 
   // Cleanup temp files on disk
   try {
@@ -64,5 +68,5 @@ export default async function upload({
     console.log(err);
   }
 
-  return video;
+  return videos[0];
 }
