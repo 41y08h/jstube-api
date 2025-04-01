@@ -1,17 +1,21 @@
 import jwt from "jsonwebtoken";
-import db from "../../lib/db";
-import IUser from "../../interfaces/IUser";
+import db from "../../db";
+import { usersTable } from "../../db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function deserializeUser(token: string) {
   try {
-    const userId = jwt.verify(token, process.env.JWT_SECRET);
-    if (typeof userId === "string") {
-      const {
-        rows: [user],
-      } = await db.query<IUser>(`select * from "User" where id = $1`, [userId]);
-      if (user) return user;
-      return undefined;
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+    };
+    if (!decoded?.id) return undefined;
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, parseInt(decoded.id))); // Ensure correct type if ID is numeric
+
+    return user ?? undefined;
   } catch {
     return undefined;
   }
