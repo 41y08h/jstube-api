@@ -1,60 +1,75 @@
 import asyncHandler from "../../../lib/asyncHandler";
-import db from "../../../lib/db";
+import db from "../../../db";
+import { videoRatingsTable } from "../../../db/schema";
+import { and, eq, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.id);
-  const userId = req.currentUser?.id as number;
+  const userId = req.currentUser?.id || null;
 
-  const {
-    rows: [existingRating],
-  } = await db.query(
-    `select * from "VideoRating" where "videoId" = $1 and "userId" = $2`,
-    [videoId, userId]
-  );
+  // Check if the user already has a rating for the video
+  const existingRating = userId
+    ? await db
+        .select()
+        .from(videoRatingsTable)
+        .where(
+          and(
+            eq(videoRatingsTable.videoId, videoId),
+            eq(videoRatingsTable.userId, userId)
+          )
+        )
+        .then((res) => res[0] || null)
+    : null;
 
   if (existingRating) {
-    await db.query(
-      `
-    update "VideoRating"
-    set status = 'LIKED'
-    where "videoId" = $1 and
-          "userId" = $2
-    `,
-      [videoId, userId]
-    );
-  } else {
-    await db.query(
-      `
-    insert into "VideoRating"("videoId", "userId", status)
-    values ($1, $2, 'LIKED')
-  `,
-      [videoId, userId]
-    );
+    // Update existing rating to 'LIKED'
+    await db
+      .update(videoRatingsTable)
+      .set({ status: "LIKED" })
+      .where(
+        and(
+          eq(videoRatingsTable.videoId, videoId),
+          eq(videoRatingsTable.userId, userId)
+        )
+      );
+  } else if (userId) {
+    // Insert new rating if user hasn't rated yet
+    await db.insert(videoRatingsTable).values({
+      videoId,
+      userId,
+      status: "LIKED",
+    });
   }
-  const {
-    rows: [ratings],
-  } = await db.query(
-    `
-    select json_build_object(
-          'likes', count(distinct "vLikes"),
-          'dislikes', count(distinct "vDislikes")
-       ) as count,
-      (
-        select status
-        from "VideoRating"
-        where "videoId" = $1
-          and "userId" = $2
-      ) as "userRatingStatus"
-    from "VideoRating"
-    left join "VideoRating" "vLikes" on
-      "vLikes"."videoId" = $1 and
-      "vLikes".status = 'LIKED'
-    left join "VideoRating" "vDislikes" on
-      "vDislikes"."videoId" = $1 and
-      "vDislikes".status = 'DISLIKED'
-  `,
-    [videoId, userId]
-  );
+
+  // Get user's current rating status for this video
+  const userRatingStatus = userId
+    ? await db
+        .select({ status: videoRatingsTable.status })
+        .from(videoRatingsTable)
+        .where(
+          and(
+            eq(videoRatingsTable.videoId, videoId),
+            eq(videoRatingsTable.userId, userId)
+          )
+        )
+        .then((res) => res[0]?.status || null)
+    : null;
+
+  // Get aggregated likes/dislikes count
+  const ratings = await db
+    .select({
+      count: sql`
+        json_build_object(
+          'likes', COUNT(*) FILTER (WHERE ${videoRatingsTable.status} = 'LIKED'),
+          'dislikes', COUNT(*) FILTER (WHERE ${videoRatingsTable.status} = 'DISLIKED')
+        )`.as("count"),
+    })
+    .from(videoRatingsTable)
+    .where(eq(videoRatingsTable.videoId, videoId))
+    .then((res) => ({
+      ...res[0],
+      userRatingStatus,
+    }));
 
   res.json(ratings);
 });
