@@ -71,12 +71,14 @@ export default asyncHandler(async (req, res) => {
   await db
     .update(videosTable)
     .set({ views: sql`${videosTable.views} + 1` })
-    .where(eq(videosTable.id, videoId));
+    .where(eq(videosTable.id, videoId))
+    .returning({ views: videosTable.views });
+
   res.json({
     id: video.id,
     title: video.title,
     description: video.description,
-    views: video.views,
+    views: video.views + 1,
     uploadedAt: video.uploadedAt,
     src: video.src,
     channel: {
