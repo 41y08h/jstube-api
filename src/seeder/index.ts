@@ -11,9 +11,8 @@ async function main() {
   try {
     debug("🌱 Seeding videos...");
 
-    // Insert videos in parallel using Drizzle
-    await Promise.all(
-      videosData.map(async (videoData) => {
+    for (const videoData of videosData) {
+      try {
         const [video] = await db
           .insert(videosTable)
           .values({
@@ -24,15 +23,19 @@ async function main() {
             duration: videoData.duration,
             userId: 1, // Assuming a default user ID for seeding
           })
-          .returning({ title: videosTable.title }); // Return only title
+          .returning({ title: videosTable.title });
 
         if (video) {
           debug(`✅ Added video: ${video.title}`);
         } else {
           debug("⚠️ Failed to insert a video");
         }
-      })
-    );
+      } catch (error) {
+        debug(
+          `❌ Error inserting video: ${videoData.title} -> ${error.message}`
+        );
+      }
+    }
 
     debug("✅ Seeding complete!");
   } catch (error) {

@@ -67,6 +67,11 @@ export default asyncHandler(async (req, res) => {
   }
 
   // Structure the response properly
+  // Increase video views
+  await db
+    .update(videosTable)
+    .set({ views: sql`${videosTable.views} + 1` })
+    .where(eq(videosTable.id, videoId));
   res.json({
     id: video.id,
     title: video.title,
@@ -113,10 +118,4 @@ export default asyncHandler(async (req, res) => {
   } else {
     await db.insert(historyTable).values({ videoId, userId });
   }
-
-  // Increase video views
-  await db
-    .update(videosTable)
-    .set({ views: sql`${videosTable.views} + 1` })
-    .where(eq(videosTable.id, videoId));
 });

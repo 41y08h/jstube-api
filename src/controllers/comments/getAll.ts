@@ -1,71 +1,133 @@
 import asyncHandler from "../../lib/asyncHandler";
-import db from "../../lib/db";
+import {
+  commentRatingsTable,
+  commentsTable,
+  usersTable,
+} from "../../db/schema";
+import db from "../../db";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.videoId);
-  const userId = req.currentUser?.id;
+  const userId = req.currentUser?.id || null;
   const beforeId = req.query.beforeId
     ? parseInt(req.query.beforeId as string)
     : undefined;
 
-  const { rows: comments } = await db.query(
-    `
-    select id,
-    text,
-    "originalCommentId",
-    "replyToCommentId",
-    "userId",
-    "videoId",
-    "createdAt",
-    "updatedAt",
-    json_build_object(
-    'id', "authorId",
-    'name', "authorName",
-    'picture', "authorPicture"
-    ) as author,
-    json_build_object(
-        'count', json_build_object(
-            'likes', "likesCount",
-            'dislikes', "dislikesCount"
-        ),
-        'userRatingStatus', (
-          select status
-          from "CommentRating"
-          where "commentId" = "JoinedComment".id and
-                "userId" = $2
+  // Subquery for reply counts
+  const replyCountSubquery = db
+    .select({
+      commentId: commentsTable.replyToCommentId,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(commentsTable)
+    .where(sql`${commentsTable.replyToCommentId} IS NOT NULL`)
+    .groupBy(commentsTable.replyToCommentId)
+    .as("reply_counts");
+
+  // Subqueries for likes and dislikes
+  const likesSubquery = db
+    .select({
+      commentId: commentRatingsTable.commentId,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(commentRatingsTable)
+    .where(eq(commentRatingsTable.status, "LIKED"))
+    .groupBy(commentRatingsTable.commentId)
+    .as("likes");
+
+  const dislikesSubquery = db
+    .select({
+      commentId: commentRatingsTable.commentId,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(commentRatingsTable)
+    .where(eq(commentRatingsTable.status, "DISLIKED"))
+    .groupBy(commentRatingsTable.commentId)
+    .as("dislikes");
+
+  // Fetch comments with ratings, author info, and reply counts
+  const comments = await db
+    .select({
+      id: commentsTable.id,
+      text: commentsTable.text,
+      originalCommentId: commentsTable.originalCommentId,
+      replyToCommentId: commentsTable.replyToCommentId,
+      userId: commentsTable.userId,
+      videoId: commentsTable.videoId,
+      createdAt: commentsTable.createdAt,
+      updatedAt: commentsTable.updatedAt,
+      author: sql`
+        json_build_object(
+          'id', ${usersTable.id},
+          'name', ${usersTable.name},
+          'picture', ${usersTable.picture}
+        )`.as("author"),
+      ratings: sql`
+        json_build_object(
+          'count', json_build_object(
+            'likes', COALESCE(likes.count, 0),
+            'dislikes', COALESCE(dislikes.count, 0)
+          ),
+          'userRatingStatus', (
+            select status
+            from ${commentRatingsTable}
+            where ${commentRatingsTable.commentId} = ${commentsTable.id}
+            and ${commentRatingsTable.userId} = ${userId}
+            limit 1
+          )
+        )`.as("ratings"),
+      replyCount: sql`COALESCE(reply_counts.count, 0)`.as("replyCount"),
+    })
+    .from(commentsTable)
+    .leftJoin(usersTable, eq(usersTable.id, commentsTable.userId))
+    .leftJoin(
+      replyCountSubquery,
+      eq(replyCountSubquery.commentId, commentsTable.id)
+    )
+    .leftJoin(likesSubquery, eq(likesSubquery.commentId, commentsTable.id))
+    .leftJoin(
+      dislikesSubquery,
+      eq(dislikesSubquery.commentId, commentsTable.id)
+    )
+    .where(
+      and(
+        eq(commentsTable.videoId, videoId),
+        eq(commentsTable.replyToCommentId, null),
+        beforeId ? sql`${commentsTable.id} < ${beforeId}` : undefined
       )
-    ) as ratings,
-    "replyCount"
-    from "JoinedComment"
-    where "replyToCommentId" is null and 
-          "videoId" = $1 ${beforeId ? `and id < $3` : ``}
-    order by id desc
-    limit 10
-  `,
-    beforeId ? [videoId, userId, beforeId] : [videoId, userId]
-  );
+    )
+    .orderBy(desc(commentsTable.id))
+    .limit(10);
 
-  const {
-    rows: [{ count: total }],
-  } = await db.query(
-    `
-    select cast(count("Comment") as int) from "Comment" 
-    where "videoId" = $1 and "replyToCommentId" is null
-    `,
-    [videoId]
-  );
+  // Fetch total comment count
+  const total = await db
+    .select({ count: count() })
+    .from(commentsTable)
+    .where(
+      and(
+        eq(commentsTable.videoId, videoId),
+        eq(commentsTable.replyToCommentId, null)
+      )
+    )
+    .then((res) => res[0]?.count || 0);
 
-  const {
-    rows: [{ hasMore }],
-  } = await db.query(
-    `
-    select (count("Comment") != 0) as "hasMore" from "Comment"
-    where "videoId" = $1 and 
-          "replyToCommentId" is null and
-          id < $2
-    `,
-    [videoId, comments[comments.length - 1]?.id]
-  );
+  // Check if there are more comments
+  const lastCommentId = comments[comments.length - 1]?.id;
+  let hasMore = false;
+  if (lastCommentId) {
+    hasMore = await db
+      .select({ hasMore: sql<boolean>`COUNT(*) > 0` })
+      .from(commentsTable)
+      .where(
+        and(
+          eq(commentsTable.videoId, videoId),
+          eq(commentsTable.replyToCommentId, null),
+          sql`${commentsTable.id} < ${lastCommentId}`
+        )
+      )
+      .then((res) => res[0]?.hasMore || false);
+  }
 
   res.json({
     total,

@@ -1,5 +1,6 @@
 import {
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   serial,
@@ -93,4 +94,44 @@ export const historyTable = pgTable(
     viewedAt: timestamp("viewed_at").defaultNow().notNull(),
   },
   (table) => [primaryKey({ columns: [table.videoId, table.userId] })]
+);
+
+export const commentsTable = pgTable("comments", {
+  id: serial("id").primaryKey(),
+  text: text("text").notNull(),
+  originalCommentId: integer("original_comment_id").references(
+    () => commentsTable.id,
+    { onDelete: "cascade" }
+  ),
+  replyToCommentId: integer("reply_to_comment_id").references(
+    () => commentsTable.id,
+    { onDelete: "cascade" }
+  ),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  videoId: integer("video_id")
+    .notNull()
+    .references(() => videosTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Define enum for status
+export const ratingStatusEnum = pgEnum("rating_status", ["LIKED", "DISLIKED"]);
+
+export const commentRatingsTable = pgTable(
+  "comment_ratings",
+  {
+    id: serial("id").primaryKey(),
+    commentId: integer("comment_id")
+      .notNull()
+      .references(() => commentsTable.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    status: ratingStatusEnum("status").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.commentId, table.userId] })]
 );
