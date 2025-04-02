@@ -5,7 +5,7 @@ import {
   usersTable,
 } from "../../db/schema";
 import db from "../../db";
-import { and, count, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.videoId);
@@ -93,7 +93,7 @@ export default asyncHandler(async (req, res) => {
     .where(
       and(
         eq(commentsTable.videoId, videoId),
-        eq(commentsTable.replyToCommentId, null),
+        isNull(commentsTable.replyToCommentId),
         beforeId ? sql`${commentsTable.id} < ${beforeId}` : undefined
       )
     )
@@ -107,7 +107,7 @@ export default asyncHandler(async (req, res) => {
     .where(
       and(
         eq(commentsTable.videoId, videoId),
-        eq(commentsTable.replyToCommentId, null)
+        isNull(commentsTable.replyToCommentId)
       )
     )
     .then((res) => res[0]?.count || 0);
@@ -122,7 +122,7 @@ export default asyncHandler(async (req, res) => {
       .where(
         and(
           eq(commentsTable.videoId, videoId),
-          eq(commentsTable.replyToCommentId, null),
+          isNull(commentsTable.replyToCommentId),
           sql`${commentsTable.id} < ${lastCommentId}`
         )
       )
