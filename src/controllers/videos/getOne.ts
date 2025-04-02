@@ -1,93 +1,122 @@
 import asyncHandler from "../../lib/asyncHandler";
-import db from "../../lib/db";
+import { eq, and, sql } from "drizzle-orm";
+import {
+  videosTable,
+  usersTable,
+  subscribersTable,
+  videoRatingsTable,
+  historyTable,
+} from "../../db/schema";
+import db from "../../db";
 
 export default asyncHandler(async (req, res) => {
-  const videoId = parseInt(req.params.id);
-  const userId = req.currentUser?.id;
+  const videoId = parseInt(req.params.id as string);
+  const userId = req.currentUser?.id ?? null; // Ensure userId is null when undefined
 
-  const {
-    rows: [video],
-  } = await db.query(
-    `
-    select v.*,
-        json_build_object(
-            'id', channel.id,
-            'name', channel.name,
-            'email', channel.email,
-	          'picture', channel.picture,
-            'subscribers', json_build_object(
-                'count', count(distinct "Subscriber"),
-                'isUserSubscribed', (
-                    select "channelId"
-                    from "Subscriber"
-                    where "userId" = $2 and
-                          "channelId" = channel.id
-                ) is not null
-            )
-        ) as channel,
-        json_build_object(
-            'count', json_build_object(
-                'likes', count(distinct  "vLikes"),
-                'dislikes', count(distinct  "vDislikes")
-            ),
-            'userRatingStatus', (
-                select status from "VideoRating"
-                where "videoId" = v.id and "userId" = $2
-            )
-        ) as ratings
-        from "Video" v
-    left join "User" channel on
-    v."userId" = channel.id
-      left join "Subscriber" on
-    channel.id = "Subscriber"."channelId"
-      left join "VideoRating" "vLikes" on
-    v.id = "vLikes"."videoId" and
-      "vLikes".status = 'LIKED'
-    left join "VideoRating" "vDislikes" on
-      v.id = "vDislikes"."videoId" and
-    "vDislikes".status = 'DISLIKED'
-    where v.id = $1
-    group by v.id, channel.id
-  `,
-    [videoId, userId]
-  );
-  res.json(video);
+  // Fetch video details with channel and ratings
+  const videoQuery = await db
+    .select({
+      id: videosTable.id,
+      title: videosTable.title,
+      description: videosTable.description,
+      views: videosTable.views,
+      uploadedAt: videosTable.uploadedAt,
+      src: videosTable.src,
+      channelId: usersTable.id,
+      channelName: usersTable.name,
+      channelEmail: usersTable.email,
+      channelPicture: usersTable.picture,
+      subscribersCount: sql<number>`COALESCE(COUNT(DISTINCT ${subscribersTable.userId}), 0)`,
+      likesCount: sql<number>`COALESCE(SUM(CASE WHEN ${videoRatingsTable.status} = 'LIKED' THEN 1 ELSE 0 END), 0)`,
+      dislikesCount: sql<number>`COALESCE(SUM(CASE WHEN ${videoRatingsTable.status} = 'DISLIKED' THEN 1 ELSE 0 END), 0)`,
+      userRatingStatus: userId
+        ? sql<string | null>`
+            (SELECT ${videoRatingsTable.status} 
+            FROM ${videoRatingsTable} 
+            WHERE ${videoRatingsTable.videoId} = ${videosTable.id} 
+            AND ${videoRatingsTable.userId} = ${userId} 
+            LIMIT 1)
+          `
+        : sql`NULL`,
+    })
+    .from(videosTable)
+    .leftJoin(usersTable, eq(videosTable.userId, usersTable.id))
+    .leftJoin(subscribersTable, eq(usersTable.id, subscribersTable.channelId))
+    .leftJoin(videoRatingsTable, eq(videosTable.id, videoRatingsTable.videoId))
+    .where(eq(videosTable.id, videoId))
+    .groupBy(videosTable.id, usersTable.id);
 
-  // Record history if authenticated
+  const video = videoQuery[0];
 
-  // Unauthenticated
-  if (!userId) return;
-
-  const {
-    rows: [foundHistory],
-  } = await db.query<{ videoId: number; userId: number; viewedAt: Date }>(
-    `select * from "History" where "videoId" = $1 and "userId" = $2`,
-    [videoId, userId]
-  );
-
-  if (foundHistory) {
-    // Change timestamp
-    db.query(
-      `
-    update "History"
-    set "viewedAt" = $1
-    where "videoId" = $2 and
-          "userId" = $3    
-    `,
-      [new Date(), videoId, userId]
-    );
-  } else {
-    db.query(
-      `
-      insert into "History"("videoId", "userId")
-      values ($1, $2)
-      `,
-      [videoId, userId]
-    );
+  if (!video) {
+    return res.status(404).json({ message: "Video not found" });
   }
 
-  // Increase views
-  db.query(`update "Video" set views = "Video".views + 1 where id = $1`, [
-    videoId,
-  ]);
+  // Fetch isUserSubscribed separately
+  let isUserSubscribed = false;
+  if (userId) {
+    const subscribedResult = await db.execute(
+      sql`SELECT EXISTS (
+      SELECT 1 FROM ${subscribersTable} 
+      WHERE ${subscribersTable.userId} = ${userId} 
+      AND ${subscribersTable.channelId} = ${video.channelId}
+    ) as subscribed`
+    );
+
+    isUserSubscribed = !!subscribedResult.rows[0]?.subscribed;
+  }
+
+  // Structure the response properly
+  res.json({
+    id: video.id,
+    title: video.title,
+    description: video.description,
+    views: video.views,
+    uploadedAt: video.uploadedAt,
+    src: video.src,
+    channel: {
+      id: video.channelId,
+      name: video.channelName,
+      email: video.channelEmail,
+      picture: video.channelPicture,
+      subscribers: {
+        count: video.subscribersCount,
+        isUserSubscribed,
+      },
+    },
+    ratings: {
+      count: {
+        likes: video.likesCount,
+        dislikes: video.dislikesCount,
+      },
+      userRatingStatus: video.userRatingStatus,
+    },
+  });
+
+  // Record history if authenticated
+  if (!userId) return;
+
+  const [foundHistory] = await db
+    .select()
+    .from(historyTable)
+    .where(
+      and(eq(historyTable.videoId, videoId), eq(historyTable.userId, userId))
+    );
+
+  if (foundHistory) {
+    await db
+      .update(historyTable)
+      .set({ viewedAt: new Date() })
+      .where(
+        and(eq(historyTable.videoId, videoId), eq(historyTable.userId, userId))
+      );
+  } else {
+    await db.insert(historyTable).values({ videoId, userId });
+  }
+
+  // Increase video views
+  await db
+    .update(videosTable)
+    .set({ views: sql`${videosTable.views} + 1` })
+    .where(eq(videosTable.id, videoId));
 });

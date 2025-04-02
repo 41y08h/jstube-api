@@ -34,7 +34,7 @@ export default asyncHandler(async (req, res) => {
         ),
     })
     .from(videosTable)
-    .leftJoin(usersTable, eq(usersTable.id, videosTable.user_id)) // Joining users as "Channel"
+    .leftJoin(usersTable, eq(usersTable.id, videosTable.userId)) // Joining users as "Channel"
     .leftJoin(
       watchLaterTable,
       and(

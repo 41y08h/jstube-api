@@ -27,7 +27,8 @@ export const videosTable = pgTable("videos", {
   src: varchar("src", { length: 500 }).notNull(), // Video URL
   thumbnail: varchar("thumbnail", { length: 500 }), // Thumbnail URL
   duration: integer("duration").notNull(), // Video duration in seconds
-  user_id: integer("user_id")
+  views: integer("views").notNull().default(0), // NEW: Tracks video views
+  userId: integer("user_id")
     .notNull()
     .references(() => usersTable.id, {
       onDelete: "cascade",
@@ -61,4 +62,35 @@ export const subscribersTable = pgTable(
   (table) => [
     primaryKey({ columns: [table.channelId, table.userId] }), // Composite Primary Key
   ]
+);
+
+export const videoRatingsTable = pgTable(
+  "video_ratings",
+  {
+    videoId: integer("video_id")
+      .notNull()
+      .references(() => videosTable.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    status: text("status").notNull().$type<"LIKED" | "DISLIKED">(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.videoId, t.userId] }), // Composite Primary Key
+  ]
+);
+
+export const historyTable = pgTable(
+  "history",
+  {
+    videoId: integer("video_id")
+      .notNull()
+      .references(() => videosTable.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    viewedAt: timestamp("viewed_at").defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.videoId, table.userId] })]
 );

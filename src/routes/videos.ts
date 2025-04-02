@@ -25,8 +25,8 @@ videos.get("/mine", authenticate, async (req, res) => {
       channel: usersTable,
     })
     .from(videosTable)
-    .leftJoin(usersTable, eq(usersTable.id, videosTable.user_id))
-    .where(eq(videosTable.user_id, userId));
+    .leftJoin(usersTable, eq(usersTable.id, videosTable.userId))
+    .where(eq(videosTable.userId, userId));
 
   res.json(userVideos);
 });

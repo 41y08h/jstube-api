@@ -1,23 +1,25 @@
 import { Router } from "express";
-import db from "../lib/db";
+import { eq } from "drizzle-orm";
+import db from "../db";
+import { historyTable, videosTable } from "../db/schema";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
   const userId = req.currentUser?.id;
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-  const query = await db.query(
-    `
-    select to_json(v) as video, "viewedAt" from "History"
-    left join "VideoWithChannel" v on
-        v.id = "History"."videoId"
-    where "History"."userId" = $1
-    order by "viewedAt" desc;
-    `,
-    [userId]
-  );
+  const query = await db
+    .select({
+      video: videosTable,
+      viewedAt: historyTable.viewedAt,
+    })
+    .from(historyTable)
+    .leftJoin(videosTable, eq(historyTable.videoId, videosTable.id))
+    .where(eq(historyTable.userId, userId))
+    .orderBy(historyTable.viewedAt);
 
-  res.json(query.rows);
+  res.json(query);
 });
 
 export default router;
