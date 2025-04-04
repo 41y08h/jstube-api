@@ -1,45 +1,42 @@
 import asyncHandler from "../../../lib/asyncHandler";
-import db from "../../../lib/db";
+import { commentRatingsTable } from "../../../db/schema";
+import { eq, and, sql } from "drizzle-orm";
+import db from "../../../db";
 
 export default asyncHandler(async (req, res) => {
-  const commentId = parseInt(req.params.id);
-  const userId = req.currentUser?.id as number;
+  const commentId = Number(req.params.id);
+  const userId = req.currentUser?.id;
 
-  const { rowCount } = await db.query(
-    `
-    delete from "CommentRating"
-    where "commentId" = $1 and
-          "userId" = $2
-  `,
-    [commentId, userId]
-  );
+  if (!userId) throw res.clientError("Unauthorized", 401);
 
-  if (!rowCount) throw res.clientError("There was a problem");
+  // Delete comment rating
+  const deletedRows = await db
+    .delete(commentRatingsTable)
+    .where(
+      and(
+        eq(commentRatingsTable.commentId, commentId),
+        eq(commentRatingsTable.userId, userId)
+      )
+    )
+    .execute();
+
+  if (!deletedRows.rowCount) throw res.clientError("There was a problem");
 
   const {
     rows: [ratings],
-  } = await db.query(
-    `
-    select json_build_object(
-         	'likes', count(distinct "cLikes"),
-          	'dislikes', count(distinct "cDislikes")
-          ) as count,
-          (
-              select status
-              from "CommentRating"
-              where "commentId" = $1
-                and "userId" = $2
-	  ) as "userRatingStatus"
-    from "CommentRating"
-    left join "CommentRating" "cLikes" on
-      "cLikes"."commentId" = $1 and
-      "cLikes".status = 'LIKED'
-    left join "CommentRating" "cDislikes" on
-      "cDislikes"."commentId" = $1 and
-      "cDislikes".status = 'DISLIKED'
-    `,
-    [commentId, userId]
-  );
+  } = await db.execute(sql`
+    SELECT
+      json_build_object(
+        'likes', (SELECT COUNT(*) FROM comment_ratings WHERE comment_id = ${commentId} AND status = 'LIKED'),
+        'dislikes', (SELECT COUNT(*) FROM comment_ratings WHERE comment_id = ${commentId} AND status = 'DISLIKED')
+      ) AS count,
+      (
+        SELECT status
+        FROM comment_ratings
+        WHERE comment_id = ${commentId} AND user_id = ${userId}
+        LIMIT 1
+      ) AS user_rating_status
+  `);
 
   res.json(ratings);
 });

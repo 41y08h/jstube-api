@@ -1,61 +1,60 @@
 import asyncHandler from "../../../lib/asyncHandler";
-import db from "../../../lib/db";
+import { commentRatingsTable } from "../../../db/schema";
+import { eq, and, sql } from "drizzle-orm";
+import db from "../../../db";
 
 export default asyncHandler(async (req, res) => {
-  const commentId = parseInt(req.params.id);
-  const userId = req.currentUser?.id as number;
+  const commentId = Number(req.params.id);
+  const userId = req.currentUser?.id;
 
-  const {
-    rows: [existingRating],
-  } = await db.query(
-    `select * from "CommentRating" where "commentId" = $1 and "userId" = $2`,
-    [commentId, userId]
-  );
+  if (!userId) throw res.clientError("Unauthorized", 401);
+
+  // Check if a rating already exists
+  const [existingRating] = await db
+    .select()
+    .from(commentRatingsTable)
+    .where(
+      and(
+        eq(commentRatingsTable.commentId, commentId),
+        eq(commentRatingsTable.userId, userId)
+      )
+    );
 
   if (existingRating) {
-    await db.query(
-      `
-    update "CommentRating"
-    set status = 'LIKED'
-    where "commentId" = $1 and
-          "userId" = $2
-    `,
-      [commentId, userId]
-    );
+    // Update existing rating to 'LIKED'
+    await db
+      .update(commentRatingsTable)
+      .set({ status: "LIKED" })
+      .where(
+        and(
+          eq(commentRatingsTable.commentId, commentId),
+          eq(commentRatingsTable.userId, userId)
+        )
+      );
   } else {
-    await db.query(
-      `
-    insert into "CommentRating"("commentId", "userId", status)
-    values ($1, $2, 'LIKED') returning *
-  `,
-      [commentId, userId]
-    );
+    // Insert new rating as 'LIKED'
+    await db.insert(commentRatingsTable).values({
+      commentId,
+      userId,
+      status: "LIKED",
+    });
   }
 
-  const {
-    rows: [ratings],
-  } = await db.query(
-    `
-    select json_build_object(
-         	'likes', count(distinct "cLikes"),
-          	'dislikes', count(distinct "cDislikes")
-          ) as count,
-          (
-              select status
-              from "CommentRating"
-              where "commentId" = $1
-                and "userId" = $2
-	  ) as "userRatingStatus"
-    from "CommentRating"
-    left join "CommentRating" "cLikes" on
-      "cLikes"."commentId" = $1 and
-      "cLikes".status = 'LIKED'
-    left join "CommentRating" "cDislikes" on
-      "cDislikes"."commentId" = $1 and
-      "cDislikes".status = 'DISLIKED'
-    `,
-    [commentId, userId]
-  );
+  // Fetch updated like/dislike counts and user rating status
+  const [ratings] = await db
+    .select({
+      count: sql`
+        json_build_object(
+          'likes', (SELECT COUNT(*) FROM comment_ratings WHERE comment_ratings.comment_id = ${commentId} AND status = 'LIKED'),
+          'dislikes', (SELECT COUNT(*) FROM comment_ratings WHERE comment_ratings.comment_id = ${commentId} AND status = 'DISLIKED')
+        )
+      `.as("count"),
+      userRatingStatus: sql`
+        (SELECT status FROM comment_ratings WHERE comment_ratings.comment_id = ${commentId} AND comment_ratings.user_id = ${userId})
+      `.as("userRatingStatus"),
+    })
+    .from(commentRatingsTable)
+    .where(eq(commentRatingsTable.commentId, commentId));
 
   res.json(ratings);
 });
