@@ -26,25 +26,35 @@ export default asyncHandler(async (req, res) => {
       channelName: usersTable.name,
       channelEmail: usersTable.email,
       channelPicture: usersTable.picture,
-      subscribersCount: sql<number>`COALESCE(COUNT(DISTINCT ${subscribersTable.userId}), 0)`,
-      likesCount: sql<number>`COALESCE(SUM(CASE WHEN ${videoRatingsTable.status} = 'LIKED' THEN 1 ELSE 0 END), 0)`,
-      dislikesCount: sql<number>`COALESCE(SUM(CASE WHEN ${videoRatingsTable.status} = 'DISLIKED' THEN 1 ELSE 0 END), 0)`,
+      subscribersCount: sql<number>`
+      (SELECT COUNT(*) FROM ${subscribersTable}
+       WHERE ${subscribersTable.channelId} = ${usersTable.id})
+    `.as("subscribersCount"),
+      likesCount: sql<number>`
+      (SELECT COUNT(*) FROM ${videoRatingsTable}
+       WHERE ${videoRatingsTable.videoId} = ${videosTable.id}
+         AND ${videoRatingsTable.status} = 'LIKED')
+    `.as("likesCount"),
+      dislikesCount: sql<number>`
+      (SELECT COUNT(*) FROM ${videoRatingsTable}
+       WHERE ${videoRatingsTable.videoId} = ${videosTable.id}
+         AND ${videoRatingsTable.status} = 'DISLIKED')
+    `.as("dislikesCount"),
       userRatingStatus: userId
         ? sql<string | null>`
-            (SELECT ${videoRatingsTable.status} 
-            FROM ${videoRatingsTable} 
-            WHERE ${videoRatingsTable.videoId} = ${videosTable.id} 
-            AND ${videoRatingsTable.userId} = ${userId} 
-            LIMIT 1)
-          `
-        : sql`NULL`,
+          (
+            SELECT ${videoRatingsTable.status}
+            FROM ${videoRatingsTable}
+            WHERE ${videoRatingsTable.videoId} = ${videosTable.id}
+              AND ${videoRatingsTable.userId} = ${userId}
+            LIMIT 1
+          )
+        `.as("userRatingStatus")
+        : sql`NULL`.as("userRatingStatus"),
     })
     .from(videosTable)
     .leftJoin(usersTable, eq(videosTable.userId, usersTable.id))
-    .leftJoin(subscribersTable, eq(usersTable.id, subscribersTable.channelId))
-    .leftJoin(videoRatingsTable, eq(videosTable.id, videoRatingsTable.videoId))
-    .where(eq(videosTable.id, videoId))
-    .groupBy(videosTable.id, usersTable.id);
+    .where(eq(videosTable.id, videoId));
 
   const video = videoQuery[0];
 
