@@ -47,6 +47,7 @@ export default asyncHandler(async (req, res) => {
           'userRatingStatus', null
         )`.as("ratings"),
       replyCount: sql`0`.as("replyCount"),
+      repliedToAuthorName: sql`NULL`,
     })
     .from(commentsTable)
     .leftJoin(usersTable, eq(usersTable.id, commentsTable.userId))

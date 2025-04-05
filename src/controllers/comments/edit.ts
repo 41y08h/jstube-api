@@ -59,6 +59,15 @@ export default asyncHandler(async (req, res) => {
       reply_count: sql`
         (SELECT COUNT(*) FROM comments AS replies WHERE replies.reply_to_comment_id = comments.id)
       `.as("reply_count"),
+      repliedToAuthorName: sql`
+      (
+        SELECT ${usersTable.name}
+        FROM ${commentsTable} AS parent
+        JOIN ${usersTable} ON ${usersTable.id} = parent.user_id
+        WHERE parent.id = ${commentsTable.replyToCommentId}
+        LIMIT 1
+      )
+    `.as("repliedToAuthorName"),
     })
     .from(commentsTable)
     .leftJoin(usersTable, eq(usersTable.id, commentsTable.userId))

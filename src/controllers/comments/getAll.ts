@@ -17,12 +17,12 @@ export default asyncHandler(async (req, res) => {
   // Subquery for reply counts
   const replyCountSubquery = db
     .select({
-      commentId: commentsTable.replyToCommentId,
+      commentId: commentsTable.originalCommentId,
       count: sql<number>`COUNT(*)`,
     })
     .from(commentsTable)
-    .where(sql`${commentsTable.replyToCommentId} IS NOT NULL`)
-    .groupBy(commentsTable.replyToCommentId)
+    .where(sql`${commentsTable.originalCommentId} IS NOT NULL`)
+    .groupBy(commentsTable.originalCommentId)
     .as("reply_counts");
 
   // Subqueries for likes and dislikes
@@ -77,7 +77,10 @@ export default asyncHandler(async (req, res) => {
             limit 1
           )
         )`.as("ratings"),
-      replyCount: sql`COALESCE(reply_counts.count, 0)`.as("replyCount"),
+      replyCount: sql`CAST(COALESCE(reply_counts.count, 0) AS INTEGER)`.as(
+        "replyCount"
+      ),
+      repliedToAuthorName: sql`NULL`,
     })
     .from(commentsTable)
     .leftJoin(usersTable, eq(usersTable.id, commentsTable.userId))
@@ -104,12 +107,7 @@ export default asyncHandler(async (req, res) => {
   const total = await db
     .select({ count: count() })
     .from(commentsTable)
-    .where(
-      and(
-        eq(commentsTable.videoId, videoId),
-        isNull(commentsTable.replyToCommentId)
-      )
-    )
+    .where(and(eq(commentsTable.videoId, videoId)))
     .then((res) => res[0]?.count || 0);
 
   // Check if there are more comments
