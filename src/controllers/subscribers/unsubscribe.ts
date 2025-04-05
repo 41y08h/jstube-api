@@ -35,5 +35,5 @@ export default asyncHandler(async (req, res) => {
     .from(subscribersTable)
     .where(eq(subscribersTable.channelId, channelId));
 
-  res.json({ total, isUserSubscribed });
+  res.json({ count: total, isUserSubscribed });
 });

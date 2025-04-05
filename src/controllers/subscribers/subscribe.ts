@@ -23,11 +23,11 @@ export default asyncHandler(async (req, res) => {
       total: count(),
       isUserSubscribed: sql<boolean>`EXISTS (
         SELECT 1 FROM subscribers
-        WHERE "channelId" = ${channelId} AND "userId" = ${userId}
+        WHERE channel_id = ${channelId} AND user_id = ${userId}
       )`.as("isUserSubscribed"),
     })
     .from(subscribersTable)
     .where(eq(subscribersTable.channelId, channelId));
 
-  res.json({ total, isUserSubscribed });
+  res.json({ count: total, isUserSubscribed });
 });
