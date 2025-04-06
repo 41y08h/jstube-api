@@ -6,8 +6,8 @@ import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
 import uploadToCloud from "../../lib/uploadToCloud";
 import { videosTable } from "../../db/schema";
-import db from "../../db";
 import { InferInsertModel } from "drizzle-orm";
+import db from "../../db";
 
 export default async function upload({
   file,
@@ -39,6 +39,7 @@ export default async function upload({
     encoding: "base64",
   });
 
+  console.log("uploading file to cloud");
   // Upload files
   const videoURL = await uploadToCloud(videoBase64, videoFilename);
   const thumbnailURL = await uploadToCloud(thumbnailBase64, thumbnailFilename);
@@ -54,7 +55,7 @@ export default async function upload({
       src: videoURL,
       thumbnail: thumbnailURL,
       duration: parseInt(metadata.duration as string), // Ensure it's an integer
-      user_id: userId,
+      userId: userId,
     })
     .returning(); // Returns the inserted row
 
