@@ -22,7 +22,6 @@ subscribers.get("/subscriptions", async (req, res) => {
 
   const subscriptions = await db
     .select({
-      subscriber: subscribersTable,
       channel: usersTable,
     })
     .from(subscribersTable)
