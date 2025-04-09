@@ -123,7 +123,6 @@ export const ratingStatusEnum = pgEnum("rating_status", ["LIKED", "DISLIKED"]);
 export const commentRatingsTable = pgTable(
   "comment_ratings",
   {
-    id: serial("id").primaryKey(),
     commentId: integer("comment_id")
       .notNull()
       .references(() => commentsTable.id, { onDelete: "cascade" }),
