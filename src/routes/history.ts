@@ -1,7 +1,12 @@
 import { Router } from "express";
-import { eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import db from "../db";
-import { historyTable, videosTable } from "../db/schema";
+import {
+  historyTable,
+  usersTable,
+  videosTable,
+  watchLaterTable,
+} from "../db/schema";
 
 const router = Router();
 
@@ -11,13 +16,36 @@ router.get("/", async (req, res) => {
 
   const query = await db
     .select({
-      video: videosTable,
+      id: videosTable.id,
+      title: videosTable.title,
+      description: videosTable.description,
+      src: videosTable.src,
+      thumbnail: videosTable.thumbnail,
+      duration: videosTable.duration,
+      uploadedAt: videosTable.uploadedAt,
       viewedAt: historyTable.viewedAt,
+      channel: {
+        id: usersTable.id,
+        name: usersTable.name,
+        picture: usersTable.picture,
+      },
+      isInWL:
+        sql<boolean>`COALESCE(${watchLaterTable.videoId} IS NOT NULL, false)`.as(
+          "isInWL"
+        ),
     })
     .from(historyTable)
     .leftJoin(videosTable, eq(historyTable.videoId, videosTable.id))
+    .leftJoin(usersTable, eq(usersTable.id, videosTable.userId))
+    .leftJoin(
+      watchLaterTable,
+      and(
+        eq(watchLaterTable.videoId, videosTable.id),
+        eq(watchLaterTable.userId, userId)
+      )
+    )
     .where(eq(historyTable.userId, userId))
-    .orderBy(historyTable.viewedAt);
+    .orderBy(sql`${historyTable.viewedAt} DESC`);
 
   res.json(query);
 });
