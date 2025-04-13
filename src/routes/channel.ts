@@ -4,9 +4,9 @@ import {
   subscribersTable,
   videosTable,
   watchLaterTable,
-} from "../db/schema";
+} from "@/db/schema";
 import { and, count, desc, eq, sql } from "drizzle-orm";
-import db from "../db";
+import db from "@/db";
 
 const router = Router();
 
@@ -50,24 +50,20 @@ router.get("/:id/videos", async (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const pageSize = 24;
 
-  const baseSelect = {
-    id: videosTable.id,
-    title: videosTable.title,
-    description: videosTable.description,
-    src: videosTable.src,
-    thumbnail: videosTable.thumbnail,
-    duration: videosTable.duration,
-    uploadedAt: videosTable.uploadedAt,
-    channel: {
-      id: usersTable.id,
-      name: usersTable.name,
-      picture: usersTable.picture,
-    },
-  };
-
-  const videos = await db
+  const query = db
     .select({
-      ...baseSelect,
+      id: videosTable.id,
+      title: videosTable.title,
+      description: videosTable.description,
+      src: videosTable.src,
+      thumbnail: videosTable.thumbnail,
+      duration: videosTable.duration,
+      uploadedAt: videosTable.uploadedAt,
+      channel: {
+        id: usersTable.id,
+        name: usersTable.name,
+        picture: usersTable.picture,
+      },
       ...(userId
         ? {
             isInWL:
@@ -79,17 +75,22 @@ router.get("/:id/videos", async (req, res) => {
     })
     .from(videosTable)
     .leftJoin(usersTable, eq(usersTable.id, videosTable.userId))
-    .leftJoin(
+    .where(eq(videosTable.userId, channelId))
+    .orderBy(desc(videosTable.uploadedAt))
+    .offset((page - 1) * pageSize)
+    .limit(pageSize);
+
+  if (userId) {
+    query.leftJoin(
       watchLaterTable,
       and(
         eq(watchLaterTable.videoId, videosTable.id),
         eq(watchLaterTable.userId, userId)
       )
-    )
-    .where(eq(videosTable.userId, channelId))
-    .orderBy(desc(videosTable.uploadedAt))
-    .offset((page - 1) * pageSize)
-    .limit(pageSize);
+    );
+  }
+
+  const videos = await query;
 
   const totalVideos = await db
     .select({ total: count() })

@@ -15,8 +15,9 @@ export const usersTable = pgTable("users", {
   email: varchar({ length: 255 }).notNull().unique(),
   picture: varchar({ length: 255 }),
   gid: varchar({ length: 255 }).notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
+    .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
@@ -26,7 +27,7 @@ export const videosTable = pgTable("videos", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   src: varchar("src", { length: 500 }).notNull(), // Video URL
-  thumbnail: varchar("thumbnail", { length: 500 }), // Thumbnail URL
+  thumbnail: varchar("thumbnail", { length: 500 }).notNull(), // Thumbnail URL
   duration: integer("duration").notNull(), // Video duration in seconds
   views: integer("views").notNull().default(0), // NEW: Tracks video views
   userId: integer("user_id")
@@ -79,10 +80,10 @@ export const videoRatingsTable = pgTable(
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),
     status: text("status").notNull().$type<"LIKED" | "DISLIKED">(),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
-  (t) => [
-    primaryKey({ columns: [t.videoId, t.userId] }), // Composite Primary Key
+  (table) => [
+    primaryKey({ columns: [table.videoId, table.userId] }), // Composite Primary Key
   ]
 );
 

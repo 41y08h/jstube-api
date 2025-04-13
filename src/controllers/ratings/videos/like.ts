@@ -1,6 +1,6 @@
-import asyncHandler from "../../../lib/asyncHandler";
-import db from "../../../db";
-import { videoRatingsTable } from "../../../db/schema";
+import asyncHandler from "@/lib/asyncHandler";
+import db from "@/db";
+import { videoRatingsTable } from "@/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {
@@ -21,7 +21,7 @@ export default asyncHandler(async (req, res) => {
         .then((res) => res[0] || null)
     : null;
 
-  if (existingRating) {
+  if (existingRating && userId) {
     // Update existing rating to 'LIKED'
     await db
       .update(videoRatingsTable)

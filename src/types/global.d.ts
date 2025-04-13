@@ -1,4 +1,5 @@
-import IUser from "../interfaces/IUser";
+import { InferSelectModel } from "drizzle-orm";
+import { usersTable } from "@/db/schema";
 
 declare global {
   namespace NodeJS {
@@ -10,6 +11,8 @@ declare global {
       GOOGLE_CLIENT_ID: string;
       GOOGLE_CLIENT_SECRET: string;
       CLIENT_URL: string;
+      DATABASE_URL: string;
+      GITHUB_ACCESS_TOKEN: string;
     }
   }
   namespace Express {
@@ -17,7 +20,7 @@ declare global {
       clientError(message: string, code?: number): Error;
     }
     interface Request {
-      currentUser?: IUser;
+      currentUser?: InferSelectModel<typeof usersTable>;
     }
   }
   namespace passport {

@@ -11,7 +11,7 @@ export default async function uploadToCloud(base64: string, filename: string) {
       content: base64,
     },
     headers: { Authorization: `token ${process.env.GITHUB_ACCESS_TOKEN}` },
-    maxBodyLength: 5e8,
+    maxBodyLength: 5e7, // 50MB
   });
 
   return `https://github.com/41y08h/GHaaS/raw/main/${filename}`;

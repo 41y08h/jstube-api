@@ -1,6 +1,5 @@
-import IUser from "../../interfaces/IUser";
-import asyncHandler from "../../lib/asyncHandler";
-import VideosService from "../../services/videos";
+import asyncHandler from "@/lib/asyncHandler";
+import VideosService from "@/services/videos";
 import { UploadedFile } from "express-fileupload";
 
 export default asyncHandler(async (req, res) => {
@@ -16,7 +15,7 @@ export default asyncHandler(async (req, res) => {
   if (!req.body.title) throw res.clientError("Title is required");
   if (!req.body.description) throw res.clientError("Description is required");
 
-  const currentUser = req.currentUser as IUser;
+  const currentUser = req.currentUser!;
 
   const video = await VideosService.upload({
     file,

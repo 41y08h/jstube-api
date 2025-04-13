@@ -1,5 +1,4 @@
 import ffmpeg from "fluent-ffmpeg";
-import path from "path";
 
 export default function generateThumbnail(
   videoPath: string,

@@ -1,9 +1,14 @@
 import "dotenv/config";
 import createDebug from "debug";
 import videosData from "./videos.data";
-import clearConsole from "../lib/clearConsole";
-import { videosTable } from "../db/schema";
-import db from "../db";
+import { videosTable } from "@/db/schema";
+import db from "@/db";
+
+function clearConsole() {
+  process.stdout.write(
+    process.platform === "win32" ? "\x1B[2J\x1B[0f" : "\x1B[2J\x1B[3J\x1B[H"
+  );
+}
 
 const debug = createDebug("app:seeder");
 
@@ -21,6 +26,7 @@ async function main() {
             thumbnail: videoData.thumbnail,
             src: videoData.src,
             duration: videoData.duration,
+            views: videoData.views,
             userId: 1, // Assuming a default user ID for seeding
           })
           .returning({ title: videosTable.title });
@@ -31,9 +37,7 @@ async function main() {
           debug("⚠️ Failed to insert a video");
         }
       } catch (error) {
-        debug(
-          `❌ Error inserting video: ${videoData.title} -> ${error.message}`
-        );
+        debug(`❌ Error inserting video: ${videoData.title}`);
       }
     }
 
