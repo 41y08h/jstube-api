@@ -1,7 +1,7 @@
-import asyncHandler from "../../lib/asyncHandler";
-import { commentsTable, usersTable } from "../../db/schema";
+import { commentsTable, usersTable } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
-import db from "../../db";
+import asyncHandler from "@/lib/asyncHandler";
+import db from "@/db";
 
 export default asyncHandler(async (req, res) => {
   const videoId = parseInt(req.params.videoId);

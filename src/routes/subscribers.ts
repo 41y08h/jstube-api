@@ -1,9 +1,9 @@
 import { Router } from "express";
-import SubscribersController from "../controllers/subscribers";
-import { subscribersTable, usersTable } from "../db/schema";
-import authenticate from "../middlewares/authenticate";
+import SubscribersController from "@/controllers/subscribers";
+import { subscribersTable, usersTable } from "@/db/schema";
+import authenticate from "@/middlewares/authenticate";
 import { eq } from "drizzle-orm";
-import db from "../db";
+import db from "@/db";
 
 const subscribers = Router();
 

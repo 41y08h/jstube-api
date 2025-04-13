@@ -4,9 +4,9 @@ import {
   videoRatingsTable,
   usersTable,
   watchLaterTable,
-} from "../db/schema";
+} from "@/db/schema";
 import { and, count, desc, eq, sql } from "drizzle-orm";
-import db from "../db";
+import db from "@/db";
 
 const router = Router();
 

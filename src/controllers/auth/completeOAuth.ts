@@ -1,7 +1,7 @@
 import { InferSelectModel } from "drizzle-orm";
-import asyncHandler from "../../lib/asyncHandler";
-import AuthService from "../../services/auth";
-import { usersTable } from "../../db/schema";
+import asyncHandler from "@/lib/asyncHandler";
+import AuthService from "@/services/auth";
+import { usersTable } from "@/db/schema";
 
 export default asyncHandler((req, res) => {
   const token = AuthService.serializeUser(

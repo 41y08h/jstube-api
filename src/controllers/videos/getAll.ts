@@ -1,6 +1,6 @@
-import db from "../../db";
-import { usersTable, videosTable, watchLaterTable } from "../../db/schema";
-import asyncHandler from "../../lib/asyncHandler";
+import db from "@/db";
+import { usersTable, videosTable, watchLaterTable } from "@/db/schema";
+import asyncHandler from "@/lib/asyncHandler";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {

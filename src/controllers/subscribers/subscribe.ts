@@ -1,7 +1,7 @@
-import asyncHandler from "../../lib/asyncHandler";
-import { subscribersTable } from "../../db/schema";
+import asyncHandler from "@/lib/asyncHandler";
+import { subscribersTable } from "@/db/schema";
 import { and, count, eq, sql } from "drizzle-orm";
-import db from "../../db";
+import db from "@/db";
 
 export default asyncHandler(async (req, res) => {
   const channelId = parseInt(req.params.channelId);

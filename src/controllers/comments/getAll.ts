@@ -1,10 +1,6 @@
-import asyncHandler from "../../lib/asyncHandler";
-import {
-  commentRatingsTable,
-  commentsTable,
-  usersTable,
-} from "../../db/schema";
-import db from "../../db";
+import asyncHandler from "@/lib/asyncHandler";
+import { commentRatingsTable, commentsTable, usersTable } from "@/db/schema";
+import db from "@/db";
 import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {

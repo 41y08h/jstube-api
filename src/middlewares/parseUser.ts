@@ -1,4 +1,4 @@
-import AuthService from "../services/auth";
+import AuthService from "@/services/auth";
 import { RequestHandler } from "express";
 
 const parseUser: RequestHandler = async (req, res, next) => {

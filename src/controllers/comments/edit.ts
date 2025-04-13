@@ -1,11 +1,7 @@
-import asyncHandler from "../../lib/asyncHandler";
-import {
-  commentsTable,
-  usersTable,
-  commentRatingsTable,
-} from "../../db/schema";
+import { commentsTable, usersTable } from "@/db/schema";
 import { and, eq, sql } from "drizzle-orm";
-import db from "../../db";
+import db from "@/db";
+import asyncHandler from "@/lib/asyncHandler";
 
 export default asyncHandler(async (req, res) => {
   const commentId = Number(req.params.id);

@@ -1,6 +1,6 @@
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import db from "../../db";
-import { usersTable } from "../../db/schema";
+import db from "@/db";
+import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export default new GoogleStrategy(

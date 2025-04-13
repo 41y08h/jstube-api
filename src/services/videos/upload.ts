@@ -4,10 +4,10 @@ import path from "path";
 import getVideoMetaData from "./getVideoMetaData";
 import generateThumbnail from "./generateVideoThubnail";
 import fs from "fs";
-import uploadToCloud from "../../lib/uploadToCloud";
-import { videosTable } from "../../db/schema";
+import uploadToCloud from "@/lib/uploadToCloud";
+import { videosTable } from "@/db/schema";
 import { InferInsertModel } from "drizzle-orm";
-import db from "../../db";
+import db from "@/db";
 
 export default async function upload({
   file,

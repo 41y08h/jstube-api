@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { and, eq, sql } from "drizzle-orm";
-import db from "../db";
+import db from "@/db";
 import {
   historyTable,
   usersTable,
   videosTable,
   watchLaterTable,
-} from "../db/schema";
+} from "@/db/schema";
 
 const router = Router();
 

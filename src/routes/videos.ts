@@ -1,14 +1,14 @@
 import { Router } from "express";
-import VideosController from "../controllers/videos";
-import authenticate from "../middlewares/authenticate";
+import VideosController from "@/controllers/videos";
+import authenticate from "@/middlewares/authenticate";
 import {
   videosTable,
   usersTable,
   watchLaterTable,
   videoRatingsTable,
-} from "../db/schema";
+} from "@/db/schema";
 import { and, count, desc, eq, sql } from "drizzle-orm";
-import db from "../db";
+import db from "@/db";
 
 const videos = Router();
 
