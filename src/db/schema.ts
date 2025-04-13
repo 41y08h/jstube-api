@@ -35,6 +35,10 @@ export const videosTable = pgTable("videos", {
       onDelete: "cascade",
     }), // Foreign key reference to users table
   uploadedAt: timestamp("uploaded_at").defaultNow().notNull(), // Automatically sets the timestamp
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()), // Automatically updates the timestamp
 });
 
 export const watchLaterTable = pgTable(
