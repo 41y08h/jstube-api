@@ -18,7 +18,7 @@ videos
   .post(authenticate, VideosController.upload);
 
 videos.get("/mine", authenticate, async (req, res) => {
-  const page = parseInt(req.query.page as string) || 1;
+  const pageNumber = parseInt(req.query.page as string) || 1;
   const pageSize = 24; // 24 videos per page
   const userId = req.currentUser?.id;
 
@@ -35,6 +35,7 @@ videos.get("/mine", authenticate, async (req, res) => {
       thumbnail: videosTable.thumbnail,
       duration: videosTable.duration,
       uploadedAt: videosTable.uploadedAt,
+      updatedAt: videosTable.updatedAt,
       channel: {
         id: usersTable.id,
         name: usersTable.name,
@@ -80,7 +81,7 @@ videos.get("/mine", authenticate, async (req, res) => {
     )
     .where(eq(videosTable.userId, userId))
     .orderBy(desc(videosTable.uploadedAt))
-    .offset((page - 1) * pageSize)
+    .offset((pageNumber - 1) * pageSize)
     .limit(pageSize);
 
   // Count total videos
@@ -92,8 +93,8 @@ videos.get("/mine", authenticate, async (req, res) => {
     .then((result) => result[0]?.total || 0);
 
   res.json({
-    page,
-    hasMore: page * pageSize < totalVideos,
+    pageNumber,
+    hasMore: pageNumber * pageSize < totalVideos,
     items: videos,
   });
 });
