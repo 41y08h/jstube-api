@@ -14,6 +14,8 @@ export default new GoogleStrategy(
   async (accessToken, refreshToken, profile, done) => {
     const { sub: gid, name, email, picture } = profile._json;
 
+    if (!name || !email) throw Error("Unprocessable");
+
     const [existingUser] = await db
       .select()
       .from(usersTable)

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "Node18",
     "outDir": "build",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,

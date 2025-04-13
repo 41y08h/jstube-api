@@ -4,6 +4,7 @@ import { subscribersTable, usersTable } from "@/db/schema";
 import authenticate from "@/middlewares/authenticate";
 import { eq } from "drizzle-orm";
 import db from "@/db";
+import asyncHandler from "@/lib/asyncHandler";
 
 const subscribers = Router();
 
@@ -13,22 +14,25 @@ subscribers
   .post(SubscribersController.subscribe)
   .delete(SubscribersController.unsubscribe);
 
-subscribers.get("/subscriptions", async (req, res) => {
-  const userId = req.currentUser?.id;
+subscribers.get(
+  "/subscriptions",
+  asyncHandler(async (req, res) => {
+    const userId = req.currentUser?.id;
 
-  if (!userId) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
 
-  const subscriptions = await db
-    .select({
-      channel: usersTable,
-    })
-    .from(subscribersTable)
-    .leftJoin(usersTable, eq(usersTable.id, subscribersTable.channelId))
-    .where(eq(subscribersTable.userId, userId));
+    const subscriptions = await db
+      .select({
+        channel: usersTable,
+      })
+      .from(subscribersTable)
+      .leftJoin(usersTable, eq(usersTable.id, subscribersTable.channelId))
+      .where(eq(subscribersTable.userId, userId));
 
-  res.json(subscriptions);
-});
+    res.json(subscriptions);
+  })
+);
 
 export default subscribers;
