@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node ./build/main.js",
     "dev": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
     "seed": "ts-node -r tsconfig-paths/register src/seeder"
@@ -31,6 +31,7 @@
     "drizzle-kit": "^0.30.6",
     "nodemon": "^3.1.9",
     "ts-node": "^10.0.0",
+    "tsc-alias": "^1.8.15",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   },
