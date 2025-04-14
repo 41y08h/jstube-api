@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./build/index.js",
-    "dev": "nodemon --transpile-only src/main.ts",
-    "seed": "ts-node src/seeder"
+    "dev": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
+    "seed": "ts-node -r tsconfig-paths/register src/seeder"
   },
   "author": "Piyush",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "drizzle-kit": "^0.30.6",
     "nodemon": "^3.1.9",
     "ts-node": "^10.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
