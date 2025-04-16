@@ -4,7 +4,7 @@ import asyncHandler from "@/lib/asyncHandler";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 
 export default asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page as string) || 1;
+  const pageNumber = parseInt(req.query.page as string) || 1;
   const pageSize = 24; // 24 videos per page
 
   const userId = req.currentUser?.id;
@@ -42,7 +42,7 @@ export default asyncHandler(async (req, res) => {
         )
       )
       .orderBy(desc(videosTable.uploadedAt))
-      .offset((page - 1) * pageSize)
+      .offset((pageNumber - 1) * pageSize)
       .limit(pageSize);
   } else {
     // If user is NOT authenticated, fetch without watch later info
@@ -64,7 +64,7 @@ export default asyncHandler(async (req, res) => {
       .from(videosTable)
       .leftJoin(usersTable, eq(usersTable.id, videosTable.userId))
       .orderBy(desc(videosTable.uploadedAt))
-      .offset((page - 1) * pageSize)
+      .offset((pageNumber - 1) * pageSize)
       .limit(pageSize);
   }
 
@@ -75,8 +75,8 @@ export default asyncHandler(async (req, res) => {
     .then((result) => result[0]?.total || 0);
 
   res.json({
-    page,
-    hasMore: page * pageSize < totalVideos,
+    pageNumber,
+    hasMore: pageNumber * pageSize < totalVideos,
     items: videos,
   });
 });

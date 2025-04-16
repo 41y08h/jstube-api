@@ -14,7 +14,7 @@ router.get("/:id", async (req, res) => {
   const channelId = parseInt(req.params.id);
   const userId = req.currentUser?.id ?? null;
 
-  const result = await db
+  const [channel] = await db
     .select({
       id: usersTable.id,
       name: usersTable.name,
@@ -41,7 +41,7 @@ router.get("/:id", async (req, res) => {
     .where(eq(usersTable.id, channelId))
     .groupBy(usersTable.id);
 
-  res.json(result[0]);
+  res.json(channel);
 });
 
 router.get("/:id/videos", async (req, res) => {

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "start": "node ./build/main.js",
-    "dev": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
+    "dev": "nodemon --transpile-only -r tsconfig-paths/register src/main.ts",
     "seed": "ts-node -r tsconfig-paths/register src/seeder",
     "db:migrate": "drizzle-kit push"
   },
