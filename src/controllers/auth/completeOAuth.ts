@@ -7,5 +7,12 @@ export default asyncHandler((req, res) => {
   const token = AuthService.serializeUser(
     req.user as InferSelectModel<typeof usersTable>
   );
-  res.redirect(`${process.env.AUTH_REDIRECT_URL}?token=${token}`);
+  const { state } = req.query;
+  const clientLocation = typeof state === "string" ? state : undefined;
+
+  if (clientLocation)
+    res.redirect(
+      `${process.env.AUTH_REDIRECT_URL}?token=${token}&state=${clientLocation}`
+    );
+  else res.redirect(`${process.env.AUTH_REDIRECT_URL}?token=${token}`);
 });
